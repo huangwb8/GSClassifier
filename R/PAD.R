@@ -62,6 +62,7 @@ classify <- function(vector,classifier,cover=T){
 #'   function.
 #' @param plot.title The title of heatmap report.
 #' @param verbose Whether to show heatmap in the process.
+#' @param extra.annot Extra top annotation. The same order as colnames of \code{expr}.
 #' @inheritParams callEnsemble
 #' @importFrom stats dist hclust cutree
 #' @importFrom randomForest randomForest
@@ -76,6 +77,46 @@ classify <- function(vector,classifier,cover=T){
 #'   high-speed for simple gene signatrues (like PAD classifier). Random forest
 #'   is a powerful stragety and may act well in larger dataset or complex gene
 #'   signatures.
+#' @examples
+#' extra.annot = HeatmapAnnotation(
+#' Dataset = id.dataset,
+#' col = list(
+#'   Dataset = if(T){
+#'     l <- mycolor[1:length(unique(id.dataset))];
+#'     names(l) <- unique(id.dataset);
+#'     l}
+#' ),
+#' annotation_name_gp = gpar(fontsize = 13, fontface = "bold"),
+#' show_legend = T
+#' )
+#'
+#' res1 <- PAD(
+#'   expr = dm.combat.tumor,
+#'   PIAM = piam,
+#'   PIDG = pidg,
+#'   plot.title = 'PanSTAD',
+#'   cluster.method = 'ward.D2',
+#'   subtype = 'PAD.train_20200110',
+#'   extra.annot = extra.annot,
+#'   verbose = T
+#' )
+#'
+#' # randomForest: time-consuming in large cohorts
+#' res2 <- PAD(
+#'   expr = dm.combat.tumor,
+#'   PIAM = piam,
+#'   PIDG = pidg,
+#'   cluster.method = 'randomForest',
+#'   rF.para = list(
+#'     seed = c(2020,485,58,152),
+#'     ntree = c(1000,1000),
+#'     k=c(2,2)
+#'   ),
+#'   subtype = 'PAD.train_20200110',
+#'   extra.annot = extra.annot,
+#'   plot.title = 'PanSTAD',
+#'   verbose = T
+#' )
 #' @export
 PAD <- function(
   expr,
@@ -89,6 +130,8 @@ PAD <- function(
     ntree = c(300,300),
     k=c(2,2)
   ),
+  extra.annot = NULL,
+  # extra.annot = ComplexHeatmap::HeatmapAnnotation(),
   plot.title = NULL,
   subtype = c('PAD.train_20200110',
               'PAD.all_20200110')[1],
@@ -112,13 +155,18 @@ PAD <- function(
 
   ## Package
   # library(lucky)
-  # nd <- c('NbClust','dplyr','ComplexHeatmap','reshape2','randomForest','cluster') #
-  # lucky::Plus.library(nd)
+  # nd <- c('NbClust','dplyr','ComplexHeatmap','reshape2','randomForest','cluster'); lucky::Plus.library(nd)
 
   ## PIAM & PIDG
   l <- readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
-  if(is.null(PIAM)) PIAM <- l$geneSet$PIAM; cat('Use default PIAM...','\n')
-  if(is.null(PIDG)) PIDG <- l$geneSet$PIDG; cat('Use default PIDG...','\n')
+  if(is.null(PIAM)) {
+    PIAM <- l$geneSet$PIAM
+    cat('Use default PIAM...','\n')
+  }
+  if(is.null(PIDG)){
+    PIDG <- l$geneSet$PIDG
+    cat('Use default PIDG...','\n')
+  }
 
   ## Data
   coGene <- intersect(c(PIAM,PIDG),rownames(expr))
@@ -234,7 +282,8 @@ PAD <- function(
         'PAD-IV')))
   df$PIAM <- gsub('piam_','',df$PIAM)
   df$PIDG <- gsub('pidg_','',df$PIDG)
-  df <- arrange(df,`PAD subtype`) %>% as.data.frame()
+  # df <- arrange(df,`PAD subtype`) %>% as.data.frame()
+  df <- df[match(colnames(xZ),df$ID),] # aligned to expr
 
   ## TMEscore-like: Activated immune score
   # This score is not well for estimation of gene expression.
@@ -265,7 +314,7 @@ PAD <- function(
   ## Heatmap
   if(T){
     rownames(df) <- as.character(df$ID)
-    xZ <- xZ[,rownames(df)]
+    # xZ <- xZ[,rownames(df)]
     # df <- df[match(table = as.character(df$ID),colnames(xZ)),]
 
     # col annotation
@@ -325,7 +374,9 @@ PAD <- function(
                  top_annotation = ha,
                  left_annotation = ra
     )
+    if(!is.null(extra.annot)) p <- p %v% extra.annot
     if(verbose) print(p)
+
   }
 
   ## Output
@@ -337,7 +388,8 @@ PAD <- function(
       cluster.method = cluster.method,
       rF.para = rF.para,
       plot.title = plot.title,
-      subtype = subtype
+      subtype = subtype,
+      extra.annot = extra.annot
     ),
     Data = df,
     MissGene = lack,

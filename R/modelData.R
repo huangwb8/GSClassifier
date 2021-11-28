@@ -24,12 +24,12 @@ modelData <- function(design,
   }
 
   ## Data
-  a <- ddply(design,
-             .variables = variable,
-             plyr::summarize,
-             Size = length(platform))
-  set.seed(2020); seeds <- sample(1:10000,nrow(a),replace = F)
-
+  # a <- ddply(design,
+  #            .variables = variable,
+  #            plyr::summarize,
+  #            Size = 1) # length(platform)
+  l <- dlply(design,.variables = variable)
+  set.seed(2020); seeds <- sample(1:10000, length(l),replace = F)
 
   ## Subtset function
   getOneData <- function(x,Prop = 0.6,seed.i=seeds[1]){
@@ -56,7 +56,6 @@ modelData <- function(design,
   }
 
   ## Training dataset
-  l <- dlply(design,.variables = variable)
   L <- list()
   for(i in 1:length(l)){ # i=1
     x.i <- l[[i]]

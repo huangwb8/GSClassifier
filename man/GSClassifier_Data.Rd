@@ -15,8 +15,8 @@ GSClassifier_Data(ImmuneSubtype = NULL, PAD = NULL)
 Internal dataset of GSClassifier package
 }
 \examples{
-PAD <- readRDS(system.file("extdata", 'PAD.rds', package = "GSClassifier"))
-ImmuneSubtype <- readRDS(system.file("extdata", 'ImmuneSubtype.rds', package = "GSClassifier"))
+PAD <- readRDS(system.file("extdata", "PAD.train_20200110", package = "GSClassifier"))
+ImmuneSubtype <- readRDS(system.file("extdata", "ImmuneSubtype.rds", package = "GSClassifier"))
 }
 \author{
 Weibin Huang<\email{654751191@qq.com}>

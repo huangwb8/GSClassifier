@@ -1,7 +1,7 @@
 Package: GSClassifier
 Type: Package
 Title: Gene signature classification platform for multiple expression data
-Version: 0.1.5
+Version: 0.1.7
 Author: Weibin Huang
 Maintainer: Weibin Huang <654751191@qq.com>
 Description: A friendly R package for classification of sample based on gene expression from RNA-Seq, microarray or other technoloty.
@@ -20,4 +20,7 @@ Imports:
     dplyr,
     randomForest,
     tidyr,
-    grid
+    grid,
+    caret,
+    ggplot2,
+    plyr
