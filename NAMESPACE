@@ -2,7 +2,10 @@
 
 export(GSClassifier_Data)
 export(PAD)
+export(PADi)
 export(callEnsemble)
+export(callEnsemble_Multi)
+export(callEnsemble_One)
 export(compareData)
 export(featureSelection)
 export(fitEnsembleModel)

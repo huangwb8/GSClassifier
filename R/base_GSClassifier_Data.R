@@ -22,7 +22,7 @@ GSClassifier_Data <- function(ImmuneSubtype=NULL,
 
   ## Example
   message('Usage example: ')
-  cat('  PAD <- readRDS(system.file("extdata", "PAD.train_20200110", package = "GSClassifier"))','\n')
+  cat('  PAD <- readRDS(system.file("extdata", "PAD.train_20200110.rds", package = "GSClassifier"))','\n')
   cat('  ImmuneSubtype <- readRDS(system.file("extdata", "ImmuneSubtype.rds", package = "GSClassifier"))')
 
 }

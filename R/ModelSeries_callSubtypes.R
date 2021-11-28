@@ -1,0 +1,357 @@
+
+####====================Basic function===================####
+
+
+
+#' @title easy report system in function building
+#' @description easy report system in function building
+#' @param levels an integer >= 1
+#' @param type one of "cat" and "message"
+#' @param ... one or multiple characters
+#' @return a verbose report
+#' @seealso \code{\link[base]{cat}};\code{\link[base]{message}}
+#' @author Weibin Huang<\email{654751191@@qq.com}>
+#' @examples
+#' LuckyVerbose("AVC")
+#' LuckyVerbose("AVC",levels = 1)
+#' LuckyVerbose("AVC",levels = 3)
+#' LuckyVerbose("AVC",levels = 3,type="message")
+LuckyVerbose <- function(...,levels = 1,type = NULL){
+  ## Verbose type
+  if(is.null(type)){
+    if(levels == 1){
+      type <-  "message"
+    } else {
+      type <-  "cat"
+    }
+  }
+
+  ## level symbol
+  if(levels > 1){
+    s1 <- paste(rep(" ",(levels-1)),collapse = "")
+    s2 <- paste(rep("o",(levels-1)),collapse = "")
+    ls <- paste(s1,s2,collapse = "")
+  } else {
+    ls <- ""
+  }
+
+  ## do Verbose
+  if(type == "message"){
+    return(base::message(ls," ",...))
+  } else {
+    if(type == "cat"){ return(base::cat(ls,...,"\n")) } else {
+      print("Input right type.")
+    }
+  }
+
+}
+
+
+#' @title geneMatch
+#' @description Match the incoming data to what was used in training
+#' @param X gene expression matrix, genes in rows, samples in columns
+#' @param geneAnnotation A data frame with ENSEMBL, SYMBOL and ENTREZID of the genes in \code{geneSet}
+#' @param geneid type of gene id in \code{X}. One of \code{'symbol'}, \code{'entrez'} and \code{'ensembl'}.
+#' @return Matched index of genes to the expression matrix.
+#' @export
+geneMatch <- function(X,
+                      geneAnnotation = NULL,
+                      geneid='ensembl') {
+
+  ## Gene annotation
+  if(is.null(geneAnnotation)){
+    geneAnnotation <- readRDS(system.file("extdata", "modelGeneAnnotation.rds", package = "GSClassifier"))
+  }
+
+  name_col <- c('SYMBOL','ENSEMBL','ENTREZID'); names(name_col) <- c('symbol','ensembl','entrez')
+
+  # Single or Mutiple samples
+  test <- is.matrix(X)|is.data.frame(X)
+
+  if(test){
+
+    # Multiple data
+
+    if (geneid == 'symbol') {
+      idx <- match(table = rownames(X), x = as.character(geneAnnotation$SYMBOL))  ### this is just for the EBPP genes ###
+
+    } else if (geneid == 'entrez') {
+      idx <- match(table = rownames(X), x = as.character(geneAnnotation$ENTREZID))
+
+    } else if (geneid == 'ensembl') {
+      idx <- match(table = rownames(X), x = geneAnnotation$ENSEMBL)
+
+    } else {
+      print("For geneids, please use:  symbol, entrez, ensembl")
+      return(NA)
+    }
+
+    X2 <- X[idx,]  ### Adds NA rows in missing genes
+    rownames(X2) <- as.character(geneAnnotation[,name_col[names(name_col) == geneid]])
+
+
+  } else {
+
+    # Single data
+
+    if (geneid == 'symbol') {
+      idx <- match(table = names(X), x = as.character(geneAnnotation$SYMBOL))  ### this is just for the EBPP genes ###
+
+    } else if (geneid == 'entrez') {
+      idx <- match(table = names(X), x = as.character(geneAnnotation$ENTREZID))
+
+    } else if (geneid == 'ensembl') {
+      idx <- match(table = names(X), x = geneAnnotation$ENSEMBL)
+
+    } else {
+      print("For geneids, please use:  symbol, entrez, ensembl")
+      return(NA)
+    }
+
+    X2 <- X[idx]  ### Adds NA rows in missing genes
+    names(X2) <- as.character(geneAnnotation[,name_col[names(name_col) == geneid]])
+
+  }
+
+  matchError <- sum(is.na(idx)) / nrow(geneAnnotation)
+
+  return(list(Subset=X2, matchError=matchError))
+}
+
+
+#' @description Error report
+#' @param err the \code{matchError} result of \code{\link{geneMatch}}
+reportError <- function(err) {
+  LuckyVerbose("**************************************")
+  LuckyVerbose("    Gene Match Error Report           ")
+  LuckyVerbose("                                      ")
+  LuckyVerbose(paste0("  percent missing genes: ",err*100,"           "))
+  LuckyVerbose("                                      ")
+  LuckyVerbose("**************************************")
+}
+
+#' @description Correct X format
+#' @inheritParams geneMatch
+rightX <- function(X){
+
+  if(F){
+    X = expr2[,1]; names(X) <- rownames(expr2)
+    X = as.matrix(expr2[,1]); rownames(X) <- rownames(expr2)
+    # X = expr2[,1:2]
+  }
+
+  multi <- (is.matrix(X) | is.data.frame(X))
+
+  if(multi){
+
+    # Matrix
+
+    if(ncol(X) == 1){
+      # Single col matrix. To vector.
+      rX <- as.vector(X); names(rX) <- rownames(X)
+    } else {
+      # Multiple matirx. Normal.
+      rX <- X
+    }
+
+  } else {
+
+    # Vector
+
+    rX <- X
+
+  }
+
+  return(rX)
+
+}
+
+
+#' @description given a matrix and gene pairs, create binary features
+#' @param X One gene expression matrix
+#' @param genes a vector of gene pairs
+#' @return xbin, binned expression profile
+#' @examples
+#' Xsub <- createPairsFeatures(Xmat, genepairs)
+createPairsFeatures <- function(X, genes) {
+
+  # first convert the gene pairs to a named list
+  # where each entry of the list is the genes for a given pivot-gene
+  genePairs <- strsplit(genes, ':')
+  pairList <- list()
+  for(gi in genePairs) {
+    pairList[[gi[1]]] <- c(pairList[[gi[1]]], gi[2])
+  }
+
+  resList <- list() # then for each pivot gene
+  for (gi in names(pairList)) {
+    # assuming it's in the data ... really should be!
+    if (gi %in% rownames(X)) {
+      gs <- pairList[[gi]]                  ## can end up with the pivot gene in the genes...
+      pval <- as.numeric(X[gi,])            ## pivot values across samples
+      idx <- match(table=rownames(X), x=gs) ## get index to genes for this pivot
+      Xsub <- X[idx,]                       ## subset the matrix, NAs for missing genes, pivot gene on top
+      if (class(Xsub) == 'numeric' & length(gs) == 1) {
+        Xsub <- matrix(data=Xsub, ncol=ncol(X), nrow=1)
+        colnames(Xsub) <- colnames(X)
+      }
+      rownames(Xsub) <- gs                  ## give gene IDs
+      res0 <- lapply(1:ncol(Xsub), function(a) binaryGene(pval[a], Xsub[,a]))  ## create binary values
+      resList[[gi]] <- do.call('cbind', res0)
+    } else { # else we need to include some dummy rows
+      randMat <- matrix(data=rbinom(n = length(pairList[[gi]]) * ncol(X), prob = 0.5, 1), ncol=ncol(X))
+      colnames(randMat) <- colnames(X)
+      resList[[gi]] <- randMat
+    }
+  }
+  newMat <- do.call('rbind', resList)
+  rownames(newMat) <- genes
+  return(newMat)
+}
+
+
+#' @description splite matrix to a list of subset
+#' @inheritParams geneMatch
+#' @param cutoff the number of every subset of X
+spliteMatrix <- function(X,cutoff=20){
+
+
+  # Cut_vector
+  cut_vector <- function(vt,nsplit=100){
+    if(nsplit==1){
+      v2 <- list(vt);
+      names(v2) <- paste0("1-",length(v2))
+    } else {
+      ##转化成位置向量
+      len.vt=1:length(vt)
+
+      ##间隔
+      len1 <- floor(length(len.vt)/nsplit)
+
+      ## low.ci and upper.ci
+      low.ci <- 1;
+      for(i in 1:(nsplit-1)){
+        low.ci[i+1] <- low.ci[i] + len1
+      }
+      upper.ci <- len1
+      for(i in 1:(nsplit-1)){
+        upper.ci[i+1] <- upper.ci[i] + len1
+      }
+
+      ## upper.ci的最后一个值
+      upper.ci[length(upper.ci)] <- length(vt)
+
+      ## 形成列表
+      v2 <- NULL
+      for(i in 1:length(low.ci)){
+        v2.i <- low.ci[i]:upper.ci[i]
+        v2.i <- vt[v2.i]
+        v2 <- c(v2,list(v2.i))
+        names(v2)[i] <- paste0(low.ci[i],"-",upper.ci[i])
+      }
+    }
+    ## 输出结果
+    return(v2)
+  }
+
+  # Splite matrix
+  nXL <- floor(ncol(X)/cutoff)
+  eXL <- cut_vector(colnames(X),nXL)
+  XL <- list()
+  for(i in 1:length(eXL)){ # i=1
+    XL[[names(eXL)[i]]] <- X[,eXL[[i]]]
+  }
+  return(XL)
+}
+
+
+
+####==============callSubtype functions==================####
+
+#' @description Data preprocessing
+#' @param mods A model or list of models, containing breakpoints, used to bin expression data
+#' @param geneSet A list of genes for classification
+#' @param nClust The number of clustering
+#' @inheritParams geneMatch
+#' @importFrom stringr str_detect
+#' @return Xbin, the binned, subset, and binarized values.
+#' @examples
+#' mod1 <- dataProc(X, mods)
+dataProc <- function(X,
+                     mods=NULL,
+                     geneSet,
+                     nClust=4) {
+
+  # working with matrices
+  Xmat <- as.matrix(X)
+
+  # Set features
+  nGS <- length(geneSet)
+  featureNames <- c()
+  for (j1 in 1:(nGS-1)) {
+    for (j2 in (j1+1):nGS) {
+      featureNames <- c(featureNames, paste0('s',j1,'s',j2))
+    }
+  }
+
+  # get out the relevant items
+  breakVec <- mods$breakVec
+  genes    <- mods$bst$feature_names
+  singleGenes <- genes[!str_detect(genes, ':')]
+  singleGenes <- singleGenes[!singleGenes %in% featureNames]
+  pairedGenes <- genes[str_detect(genes, ':')]
+
+  # bin the expression data
+  Xbinned <- apply(Xmat, 2, breakBin, breakVec)
+  rownames(Xbinned) <- rownames(Xmat)
+
+  # and subset the genes to those not in pairs
+  Xbinned <- Xbinned[singleGenes,]
+
+  # here we have expression data, and we're using the pairs model
+  # so we need to make pairs features.
+  Xpairs <- createPairsFeatures(Xmat, pairedGenes)
+  colnames(Xpairs) <- colnames(Xmat)
+
+  # gene set features.
+  Xset <- makeSetData(Xmat,geneSet)
+
+  # join the data types and transpose
+  Xbin <- t(rbind(Xbinned, Xpairs, Xset))
+  return(Xbin)
+}
+
+
+#' @description Make subtype calls for one sample
+#' @param mods xgboost model list
+#' @param X gene expression matrix, genes in rows, samples in columns
+#' @param ci cluster label, and index into mods
+#' @param verbose whether report messages
+#' @inheritParams dataProc
+#' @import xgboost
+#' @return preds of one cluster model.
+callOneSubtype <- function(mods, X, ci, geneSet, nClust, verbose=T) {
+
+  # Xbin needs to have the same columns as the training matrix...
+  if(verbose) LuckyVerbose(paste0('calling subtype ', ci))
+  mi <- mods[[ci]]
+  Xbin <- dataProc(X, mods=mi, geneSet, nClust)
+  pred <- predict(mi$bst, Xbin)
+  return(pred)
+}
+
+
+#' @description Make subtype calls for each sample
+#' @inheritParams callOneSubtype
+callSubtypes <- function(mods, X, geneSet, nClust=4, verbose=T) {
+
+  pList <- lapply(1:nClust, function(mi) callOneSubtype(mods, X, mi, geneSet, nClust, verbose))
+  pMat  <- do.call('cbind', pList)
+  colnames(pMat) <- 1:nClust # names(mods)
+  bestCall <- apply(pMat, 1, function(pi) colnames(pMat)[which(pi == max(pi)[1])])
+
+  return(data.frame(SampleID=colnames(X), BestCall=bestCall, pMat, stringsAsFactors=F))
+}
+
+
+

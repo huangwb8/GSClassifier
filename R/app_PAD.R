@@ -72,8 +72,7 @@ classify <- function(vector,classifier,cover=T){
 #' @importFrom ComplexHeatmap HeatmapAnnotation rowAnnotation Heatmap
 #' @importFrom grid gpar
 #' @details This function is used for unsupervised classification of raw data,
-#'   which is pivotal for the following supervised machine learning. According
-#'   to empirical evidence, the \code{'ward.D2'} method could be useful and
+#'   which is pivotal for the following supervised machine learning. Empirically, the \code{'ward.D2'} method could be useful and
 #'   high-speed for simple gene signatrues (like PAD classifier). Random forest
 #'   is a powerful stragety and may act well in larger dataset or complex gene
 #'   signatures.
