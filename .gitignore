@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+.Rbuildignore
+.gitignore
 test.R
 test1_Corrplot.pdf
 test2.R
