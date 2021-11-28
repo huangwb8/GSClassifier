@@ -1,4 +1,3 @@
-    ## Warning: package 'badger' was built under R version 4.0.5
 
 # GSClassifier
 
