@@ -15,7 +15,7 @@ Status](http://www.bioconductor.org/shields/build/devel/bioc/clusterProfiler.svg
 -   Based on 2 lightweight gene signatures.
 -   Easy for modeling and calling.
 
-<img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/people.jpg?raw=true" width="890"/>
+<img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/people.jpg?raw=true" width="445"/>
 
 ## :writing\_hand: Authors
 
