@@ -2,14 +2,15 @@
 
 # GSClassifier: Gene Signature Classifier
 
-[![Project Status: Active - The project has reached a stable, usable
-state and is being actively
-developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![platform](http://www.bioconductor.org/shields/availability/devel/clusterProfiler.svg)](https://www.bioconductor.org/packages/devel/bioc/html/clusterProfiler.html#archives)
-[![Build 
-Status](http://www.bioconductor.org/shields/build/devel/bioc/clusterProfiler.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/clusterProfiler/)
+<p align="left">
+<a href="https://github.com/huangwb8/GSClassifier/blob/master/license.txt"><img src="https://shields.io/badge/license-Apache%202-blue"></a>
+<a href=""><img src="https://img.shields.io/github/r-package/v/huangwb8/GSClassifier"></a>
+<a href=""><img src="https://img.shields.io/github/commit-activity/m/huangwb8/GSClassifier"></a>
+<a href=""><img src="https://img.shields.io/github/stars/huangwb8/GSClassifier?style=social"></a>
+<a href=""><img src="https://img.shields.io/badge/platform-windows%20%7C%20linux-lightgrey"></a>
+</p>
 
-**A comprehensive  classification tool  based on pure transcriptomics for precision medicine**
+#### A comprehensive  classification tool  based on pure transcriptomics for precision medicine
 
 <img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/backgroud_for_GS_2.jpg?raw=true" width="900"/>
 
