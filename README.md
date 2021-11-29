@@ -1,4 +1,4 @@
-<img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/logo%20for%20GSClassifier.jpg?raw=true" height="100"/>
+<img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/logo%20for%20GSClassifier.jpg?raw=true" height="150"/>
 
 
 # GSClassifier
