@@ -1,8 +1,6 @@
 
 # GSClassifier
 
-<img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/cat.gif?raw=true" height="200" align="right" />
-
 [![Project Status: Active - The project has reached a stable, usable
 state and is being actively
 developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
