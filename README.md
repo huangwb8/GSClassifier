@@ -31,7 +31,12 @@ Diseases Center
 
 [![saythanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://github.com/huangwb8/test_file/blob/master/GSClassifier/pay.jpg?raw=true)
 
-
-## :writing\_hand: Cites:
+## :writing\_hand: Our papers
 
 To be continued.
+
+## :writing\_hand: Reference
+
+1. Thorsson V, Gibbs D L, Brown S D, et al. The Immune Landscape of Cancer[J]. Immunity, 2018, 48(4): 812-830 e814.
+2. Gibbs D L J B. Robust classification of Immune Subtypes in Cancer[J]. 2020
+
