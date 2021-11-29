@@ -17,7 +17,6 @@ Status](http://www.bioconductor.org/shields/build/devel/bioc/clusterProfiler.svg
 
 Please go to [wiki](https://github.com/huangwb8/GSClassifier/wiki) for more details.
 
-------------------------------------------------------------------------
 
 ## :writing\_hand: Authors
 
@@ -30,8 +29,7 @@ Diseases Center
 
 [![saythanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://github.com/huangwb8/test_file/blob/master/GSClassifier/pay.jpg?raw=true)
 
-------------------------------------------------------------------------
 
-## :writing\_hand:  Please cites:
+## :writing\_hand: Cites:
 
 To be continued.
