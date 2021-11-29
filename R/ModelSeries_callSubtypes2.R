@@ -136,11 +136,18 @@ callEnsemble_One <- function(X,
   eMeds <- as.data.frame(eMeds)
   colnames(eMeds) <- 1:nClust # names(mods)
 
-  ## Best call
+  ## Best call of maximum strategy
   bestCall_max <-
     apply(eMeds, 1, function(pi)
       colnames(eMeds)[which(pi == max(pi)[1])])
-  bestCall_sc <- predict(scaller, as.matrix(eMeds)) + 1
+
+  ## Best call based on scaller
+  if(!is.null(scaller)){
+    bestCall_sc <- predict(scaller, as.matrix(eMeds)) + 1
+  } else {
+    bestCall_sc <- NA
+  }
+
 
   ## Merge
   sampleIDs <- eList[[1]][, 1]
@@ -205,11 +212,17 @@ callEnsemble_Multi <- function(X,
   eMeds <- as.data.frame(eMeds)
   colnames(eMeds) <- 1:nClust # names(mods)
 
-  ## Best call
+  ## Best call of maximum strategy
   bestCall_max <-
     apply(eMeds, 1, function(pi)
       colnames(eMeds)[which(pi == max(pi)[1])])
-  bestCall_sc <- predict(scaller, as.matrix(eMeds)) + 1
+
+  ## Best call based on scaller
+  if(!is.null(scaller)){
+    bestCall_sc <- predict(scaller, as.matrix(eMeds)) + 1
+  } else {
+    bestCall_sc <- NA
+  }
 
   ## Merge
   sampleIDs <- eList[[1]][, 1]
@@ -320,10 +333,17 @@ parCallEnsemble <- function(X,
   colnames(eMeds) <- 1:nClust # names(mods)
 
   ## Best call
+  ## Best call of maximum strategy
   bestCall_max <-
     apply(eMeds, 1, function(pi)
       colnames(eMeds)[which(pi == max(pi)[1])])
-  bestCall_sc <- predict(scaller, as.matrix(eMeds)) + 1
+
+  ## Best call based on scaller
+  if(!is.null(scaller)){
+    bestCall_sc <- predict(scaller, as.matrix(eMeds)) + 1
+  } else {
+    bestCall_sc <- NA
+  }
 
   ## Merge
   sampleIDs <- eList[[1]][, 1]
