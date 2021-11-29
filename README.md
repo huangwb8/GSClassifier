@@ -1,4 +1,6 @@
-<img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/logo%20for%20GSClassifier.jpg?raw=true" height="150"/>
+<p align="left">
+<a href="https://github.com/huangwb8/GSClassifier"><img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/logo%20for%20GSClassifier.jpg?raw=true" height="160"> </a>
+</p>
 
 # GSClassifier: Gene Signature Classifier
 
