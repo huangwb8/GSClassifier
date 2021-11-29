@@ -15,12 +15,12 @@ Status](http://www.bioconductor.org/shields/build/devel/bioc/clusterProfiler.svg
 
 <img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/backgroud_for_GS_2.jpg?raw=true" width="900"/>
 
-## :writing\_hand: Tutorial
+## :camel: Tutorial
 
 Please go to [wiki](https://github.com/huangwb8/GSClassifier/wiki) for more details.
 
 
-## :writing\_hand: Authors
+## :alien: Authors
 
 Weibin Huang <654751191@qq.com>
 
@@ -31,11 +31,11 @@ Diseases Center
 
 [![saythanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://github.com/huangwb8/test_file/blob/master/GSClassifier/pay.jpg?raw=true)
 
-## :writing\_hand: Our papers
+## :+1: Our papers
 
 To be continued.
 
-## :writing\_hand: Reference
+## :star: Reference
 
 1. Thorsson V, Gibbs D L, Brown S D, et al. The Immune Landscape of Cancer[J]. Immunity, 2018, 48(4): 812-830 e814.
 2. Gibbs D L J B. Robust classification of Immune Subtypes in Cancer[J]. 2020
