@@ -11,7 +11,7 @@ developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repo
 [![Build 
 Status](http://www.bioconductor.org/shields/build/devel/bioc/clusterProfiler.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/clusterProfiler/)
 
-> ### A comprehensive  classification tool  based on pure transcriptomics
+> ### A comprehensive  classification tool  based on pure transcriptomics for precision medicine
 
 <img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/backgroud_for_GS_2.jpg?raw=true" width="900"/>
 
