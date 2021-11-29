@@ -1,6 +1,6 @@
 <img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/logo%20for%20GSClassifier.jpg?raw=true" height="150"/>
 
-# GSClassifier: Gene Signature Classifier
+## GSClassifier: Gene Signature Classifier
 
 <p align="left">
 <a href="https://github.com/huangwb8/GSClassifier/blob/master/license.txt"><img src="https://shields.io/badge/license-Apache%202-blue"></a>
