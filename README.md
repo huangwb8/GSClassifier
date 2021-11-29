@@ -5,11 +5,11 @@
 # GSClassifier: Gene Signature Classifier
 
 <p align="left">
-<a href="https://github.com/huangwb8/GSClassifier/blob/master/license.txt"><img src="https://shields.io/badge/license-Apache%202-blue"></a>
 <a href=""><img src="https://img.shields.io/github/r-package/v/huangwb8/GSClassifier"></a>
+<a href="https://github.com/huangwb8/GSClassifier/blob/master/license.txt"><img src="https://shields.io/badge/license-Apache%202-blue"></a>
+<a href=""><img src="https://img.shields.io/badge/platform-windows%20%7C%20linux-lightgrey"></a>
 <a href=""><img src="https://img.shields.io/github/commit-activity/m/huangwb8/GSClassifier"></a>
 <a href=""><img src="https://img.shields.io/github/stars/huangwb8/GSClassifier?style=social"></a>
-<a href=""><img src="https://img.shields.io/badge/platform-windows%20%7C%20linux-lightgrey"></a>
 <a href="https://github.com/huangwb8/GSClassifier/issues"><img src="https://img.shields.io/github/issues-raw/huangwb8/GSClassifier"></a>
 </p>
 
