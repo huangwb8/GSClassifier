@@ -319,11 +319,11 @@ PAD <- function(
     ha = HeatmapAnnotation(
       PIAM = df$PIAM,
       PIDG = df$PIDG,
-      `PADm subtype` = df$`PAD subtype`,
+      `PAD subtype` = df$`PAD subtype`,
       col = list(
         PIAM = c('high' = 'red','low' = 'blue'),
         PIDG = c('high' = 'red','low' = 'blue'),
-        `PADm subtype` = c(
+        `PAD subtype` = c(
           'PAD-I' = "#F8766D",
           'PAD-II' = "#7CAE00",
           'PAD-III' = "#00BFC4",
