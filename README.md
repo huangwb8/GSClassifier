@@ -10,7 +10,7 @@
 <a href=""><img src="https://img.shields.io/badge/platform-windows%20%7C%20linux-lightgrey"></a>
 </p>
 
-#### A comprehensive  classification tool  based on pure transcriptomics for precision medicine
+### A comprehensive  classification tool  based on pure transcriptomics for precision medicine
 
 <img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/backgroud_for_GS_2.jpg?raw=true" width="900"/>
 
