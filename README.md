@@ -7,15 +7,16 @@
 state and is being actively
 developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![platform](http://www.bioconductor.org/shields/availability/devel/clusterProfiler.svg)](https://www.bioconductor.org/packages/devel/bioc/html/clusterProfiler.html#archives)
-[![Build
+[![Build 
 Status](http://www.bioconductor.org/shields/build/devel/bioc/clusterProfiler.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/clusterProfiler/)
 
--   `GSClassifier` was developed for persionalized prediction of immune
-    subtypes in gastric cancer based on the large-scale transcriptomics.
--   Based on 2 lightweight gene signatures.
--   Easy for modeling and calling.
-
 <img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/people.jpg?raw=true" width="445"/>
+
+## :writing\_hand: Tutorial
+
+Please go to [wiki](https://github.com/huangwb8/GSClassifier/wiki) for more details.
+
+------------------------------------------------------------------------
 
 ## :writing\_hand: Authors
 
@@ -30,5 +31,6 @@ Diseases Center
 
 ------------------------------------------------------------------------
 
-If you use `GClassifier` in published research, please cite the most
-appropriate paper(s) from this list:
+## :writing\_hand:  Please cites:
+
+To be continued.
