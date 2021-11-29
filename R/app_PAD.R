@@ -132,8 +132,7 @@ PAD <- function(
   extra.annot = NULL,
   # extra.annot = ComplexHeatmap::HeatmapAnnotation(),
   plot.title = NULL,
-  subtype = c('PAD.train_20200110',
-              'PAD.all_20200110')[1],
+  subtype = 'PAD.train_20200110',
   verbose = T
 ){
 

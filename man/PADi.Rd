@@ -41,7 +41,7 @@ if (!requireNamespace("GSClassifier", quietly = TRUE)){
 library(GSClassifier)
 
 # Load test data of RNA-Seq expression
-testData <- readRDS(system.file("extdata", "testData.rds", package = "GSClassifier"))
+testData <- readRDS(system.file("extdata", "testData.rds", package = "GSClassifier"))[['Kim2018_3']]
 dim(testData) # 19118 3
 
 # Data formats (Different data but the same function and usage)
