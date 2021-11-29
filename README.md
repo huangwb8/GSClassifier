@@ -1,7 +1,7 @@
 <img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/logo%20for%20GSClassifier.jpg?raw=true" height="150"/>
 
 
-# GSClassifier
+# GSClassifier: Gene Signature Classifier
 
 
 [![Project Status: Active - The project has reached a stable, usable
