@@ -5,16 +5,19 @@
 #' @description Internal dataset of GSClassifier package
 #' @param ImmuneSubtype Data integration for calling of immune subtype by Thorsson et al. in 2018.
 #' @param PAD Data integration for calling of pan-immune activation/dysfunction subtype (PAD).
+#' @param model logic. Whether to only show a list of \code{GSClassifier} models
 #' @author Weibin Huang<\email{654751191@@qq.com}>
 #' @examples
 #' PAD <- readRDS(system.file("extdata", "PAD.train_20200110", package = "GSClassifier"))
 #' ImmuneSubtype <- readRDS(system.file("extdata", "ImmuneSubtype.rds", package = "GSClassifier"))
 #' @export
 GSClassifier_Data <- function(ImmuneSubtype=NULL,
-                              PAD=NULL){
+                              PAD = NULL,
+                              model = T){
 
   data.p <- system.file("extdata", package = "GSClassifier")
   data.n <- list.files(data.p,pattern = '.rds$',full.names = F,recursive = F)
+  if(model) data.n <- data.n[!grepl('test',data.n)]
 
   ## Available data
   message('Available data:')

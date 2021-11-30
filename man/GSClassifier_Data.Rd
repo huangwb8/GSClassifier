@@ -4,12 +4,14 @@
 \alias{GSClassifier_Data}
 \title{Data in \code{GSClassifier} package}
 \usage{
-GSClassifier_Data(ImmuneSubtype = NULL, PAD = NULL)
+GSClassifier_Data(ImmuneSubtype = NULL, PAD = NULL, model = T)
 }
 \arguments{
 \item{ImmuneSubtype}{Data integration for calling of immune subtype by Thorsson et al. in 2018.}
 
 \item{PAD}{Data integration for calling of pan-immune activation/dysfunction subtype (PAD).}
+
+\item{model}{logic. Whether to only show a list of \code{GSClassifier} models}
 }
 \description{
 Internal dataset of GSClassifier package
