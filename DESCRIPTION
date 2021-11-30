@@ -27,4 +27,5 @@ Imports:
     grid,
     caret,
     ggplot2,
-    plyr
+    plyr,
+    luckyBase
