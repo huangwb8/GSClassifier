@@ -15,10 +15,6 @@
 
 ### A comprehensive  classification tool  based on pure transcriptomics for precision medicine
 
-<p align="center">
-<a href="https://github.com/huangwb8/GSClassifier"><img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/backgroud_for_GS_2.jpg?raw=true" width="900"> </a>
-</p>
-
 
 ## :camel: Tutorial
 
