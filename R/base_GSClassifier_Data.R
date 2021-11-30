@@ -20,7 +20,7 @@ GSClassifier_Data <- function(model = T) {
       recursive = F
     )
   if (model)
-    data.n <- data.n[!grepl('test', data.n)]
+    data.n <- data.n[!data.n %in% c('general-gene-annotation.rds', 'testData.rds')]
 
   ## Available data
   message('Available data:')
