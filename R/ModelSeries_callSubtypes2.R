@@ -70,14 +70,11 @@ callEnsemble <- function(X,
 }
 
 
-
-#' @title callEnsemble_One
 #' @description Make subtype calls for single sample
 #' @inheritParams callEnsemble
 #' @import xgboost
 #' @return table, column 1 is best call, remaining columns are subtype
 #'   prediction scores.
-#' @export
 callEnsemble_One <- function(X,
                              ens = NULL,
                              geneAnnotation = NULL,
@@ -163,13 +160,11 @@ callEnsemble_One <- function(X,
 }
 
 
-#' @title callEnsemble_Multi
 #' @description Make subtype calls for multiple samples
 #' @inheritParams callEnsemble
 #' @import xgboost
 #' @return table, column 1 is best call, remaining columns are subtype
 #'   prediction scores.
-#' @export
 callEnsemble_Multi <- function(X,
                                ens = NULL,
                                geneAnnotation = NULL,

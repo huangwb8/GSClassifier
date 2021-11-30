@@ -12,7 +12,7 @@ PAD(
   rF.para = list(seed = c(2020, 485, 4, 8), ntree = c(300, 300), k = c(2, 2)),
   extra.annot = NULL,
   plot.title = NULL,
-  subtype = c("PAD.train_20200110", "PAD.all_20200110")[1],
+  subtype = "PAD.train_20200110",
   verbose = T
 )
 }
