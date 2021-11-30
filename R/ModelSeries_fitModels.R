@@ -389,10 +389,10 @@ fitEnsembleModel <- function(Xs, Ys,
 
   set.seed(sampSeed); seeds <- sample(1:100000,size=n,replace = F)
 
-  fitFun <- function(i) {
+  fitFun <- function(i) { # i = (1:20)[1]
     modi <- c()
-    set.seed(seeds[1]); jdx <- sample(1:ncol(Xs), size = sampSize * ncol(Xs), replace=F)
-    jdx <- sample(1:ncol(Xs), size = sampSize * ncol(Xs), replace=F)
+    # set.seed(seeds[1]); jdx <- sample(1:ncol(Xs), size = sampSize * ncol(Xs), replace=F)
+    set.seed(seeds[i]); jdx <- sample(1:ncol(Xs), size = sampSize * ncol(Xs), replace=F)
     Xs2 <- Xs[,jdx]
     Ys2 <- Ys[jdx]
     modi <- fitSubtypeModel(Xs=Xs2, Ys=Ys2,
