@@ -18,14 +18,16 @@
 
 ## :camel: Tutorial
 
-Please go to [wiki](https://github.com/huangwb8/GSClassifier/wiki) for more details.
+Please go to [wiki](https://github.com/huangwb8/GSClassifier/wiki) for step-by-step guides.
 
 
 ## :alien: Authors
 
-Weibin Huang (黄伟斌);  <654751191@qq.com>;  <a href="https://github.com/huangwb8/test_file/blob/master/GSClassifier/pay.jpg?raw=true"><img src="https://img.shields.io/badge/say-thanks-ff69b4.svg"></a>
+Weibin Huang (黄伟斌);  <huangwb886@gmail.com>;  <a href="https://github.com/huangwb8/test_file/blob/master/GSClassifier/pay.jpg?raw=true"><img src="https://img.shields.io/badge/say-thanks-ff69b4.svg"></a>
 
-Guangdong Provincial Key Laboratory of Digestive Cancer Research, The Seventh Affiliated Hospital of Sun Yat-sen University, No. 628 Zhenyuan Road, Shenzhen, 518107, Guangdong, People’s Republic of China. Digestive Diseases Center
+1. Guangdong Provincial Key Laboratory of Digestive Cancer Research, The Seventh Affiliated Hospital of Sun Yat-sen University, No. 628 Zhenyuan Road, Shenzhen, 518107, Guangdong, People’s Republic of China. Digestive Diseases Center
+
+2. Department of Gastrointestinal Surgery, the First Affiliated Hospital of Sun Yat-sen University, 58 Zhongshan 2nd Road, Guangzhou 510080, Guangdong, China
 
 ## :+1: Our papers
 
