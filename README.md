@@ -20,6 +20,9 @@
 
 Please go to [wiki](https://github.com/huangwb8/GSClassifier/wiki) for more details.
 
+## :eyes: Mirror
+
++ [Gitee: for users from China or other countries/regions](https://gitee.com/huangwb8/GSClassifier)
 
 ## :alien: Authors
 
