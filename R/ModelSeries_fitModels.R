@@ -110,7 +110,7 @@ makeGenePairs <- function(genes, Xsub) {
 makeSetData <- function(Xmat,geneSet) {
 
   resultList <- list()
-  nGS <- length(geneSet)
+  nGS <- length(geneSet) # nGS=4
 
   featureNames <- c()
   for (j1 in 1:(nGS-1)) {
@@ -178,7 +178,14 @@ trainDataProc <- function(Xmat, Yvec,
   Xbinned <- Xbinned[Xfeat$Genes,]
 
   # gene set features.
-  Xset <- makeSetData(Xmat,geneSet)
+  nGS <- length(geneSet) # Optimized for single signature
+  if(nGS == 1){
+    # Without gene sets interaction
+    Xset <- NULL
+  } else {
+    # With gene sets interaction
+    Xset <- makeSetData(Xmat,geneSet) #--bug--
+  }
 
   # join the data types and transpose
   Xbin <- t(rbind(Xbinned, Xpairs, Xset))
@@ -197,6 +204,7 @@ trainDataProc <- function(Xmat, Yvec,
 #' @param Ybin Binned phenotype vector.
 #' @param params The parameters for \code{\link[xgboost]{xgb.train}}
 #' @param genes Genes for modeling
+#' @param verbose whether report modeling process
 #' @inheritParams trainDataProc
 #' @importFrom xgboost xgboost xgb.cv xgb.DMatrix
 #' @return A single xgboost classifier.
@@ -206,7 +214,8 @@ cvFitOneModel <- function(Xbin, Ybin,
                                       nrounds = 100,
                                       nthread = 5, nfold=5),
                           breakVec=c(0, 0.25, 0.5, 0.75, 1.0),
-                          genes){
+                          genes,
+                          verbose = F){
   dtrain <- xgb.DMatrix(Xbin, label = Ybin)
 
   # xgb.cv
@@ -220,17 +229,19 @@ cvFitOneModel <- function(Xbin, Ybin,
                       eta=params$eta,
                       early_stopping_rounds=2,
                       metrics = list("error", "auc"),
-                      objective = "binary:logistic"),
+                      objective = "binary:logistic",
+                      verbose = verbose),
       error = function(e)e)
     if('message' %in% names(x)){
-      cat('Attention! AUC: the dataset only contains pos or neg samples. Repeat xgb.cv','\n')
+      LuckyVerbose('Attention! AUC: the dataset only contains pos or neg samples. Repeat xgb.cv')
       x_error <- x
     } else {
       cvRes <- x
       break
     }
   }
-  cat('Best interation: ',cvRes$best_iteration,'\n')
+
+  LuckyVerbose('Best interation: ',cvRes$best_iteration)
 
   # xgboost via best interation
   bst <- xgboost(data = Xbin,
@@ -239,32 +250,29 @@ cvFitOneModel <- function(Xbin, Ybin,
                  eta=params$eta,
                  nrounds = cvRes$best_iteration,
                  nthread=params$nthread,
-                 objective = "binary:logistic")
+                 objective = "binary:logistic",
+                 verbose = verbose)
 
   return(list(bst=bst, breakVec=breakVec, genes=genes))
 }
 
+#' @description Train a single subtype model using cross validation
 #' @importFrom xgboost xgb.train xgb.DMatrix
 #' @importFrom caret trainControl train
+#' @inheritParams cvFitOneModel
 cvFitOneModel2 <- function(Xbin, Ybin,
                            breakVec=c(0, 0.25, 0.5, 0.75, 1.0),
                            genes,
-                           seed = 101){
+                           seed = 101,
+                           caret.grid = NULL,
+                           verbose = F){
 
   # Data
   x = Xbin
   y = factor(Ybin,levels = c(0,1))
 
   # Parameters of caret::train
-  grid <- expand.grid(
-    nrounds = c(10,15,20,30,40),
-    colsample_bytree = 1,
-    min_child_weight = 1,
-    eta = c(0.01, 0.1, 0.3),
-    gamma = c(0.5, 0.3),
-    subsample = 0.7,
-    max_depth = c(2,3)
-  )
+  grid <- caret.grid
 
   cntrl <- trainControl(
     method = "cv",
@@ -294,153 +302,12 @@ cvFitOneModel2 <- function(Xbin, Ybin,
               param[-1])
   xgb.fit <- xgb.train(params = param2,
                        data = train.mat,
-                       nrounds = param$nrounds)
+                       nrounds = param$nrounds,
+                       verbose = ifelse(verbose,1,0))
 
   return(list(bst=xgb.fit, breakVec=breakVec, genes=genes))
 
 
 }
-
-#' @description Train a single subtype model using cross validation
-#' @param Xs Gene expression matrix.
-#' @param Ys Phenotype vector, multiclass
-#' @param caret.seed The random seed for caret::train process when \code{params} is \code{NULL}
-#' @inheritParams cvFitOneModel
-#' @inheritParams trainDataProc
-#' @return A list of xgboost classifiers, one for each subtype.
-#' @examples
-#' params=list(
-#' max_depth = 2,
-#' eta = 0.5,
-#' nrounds = 100,
-#' nthread = 5,
-#' nfold=5)
-#' @export
-fitSubtypeModel <- function(Xs, Ys,
-                            geneSet,
-                            breakVec=c(0, 0.25, 0.5, 0.75, 1.0),
-                            params=list(max_depth = 2,
-                                        eta = 0.5,
-                                        nrounds = 100,
-                                        nthread = 5,
-                                        nfold=5),
-                            caret.seed = 101,
-                            ptail=0.05) {
-
-  modelList <- list()
-  allLabels <- unique(Ys)
-
-  set.seed(caret.seed); caret.seeds <- sample(1:100000,size= length(unique(Ys)),replace = F)
-
-
-  for (i in 1:length( allLabels)) { # i=1
-
-    yi = allLabels[i]
-    print(paste0('Subtype: ',yi, '  processing data...'))
-    res0 <- trainDataProc(Xs, Ys, geneSet = geneSet,subtype=yi, ptail=ptail)
-    print(paste0('   training using ', dim(res0$dat$Xbin), ' features x samples'))
-    dat  <- res0$dat
-    if(!is.null(params)){
-      csfr <- cvFitOneModel(dat$Xbin, dat$Ybin, params, breakVec, dat$Genes)
-    } else {
-      csfr <- cvFitOneModel2(dat$Xbin, dat$Ybin, breakVec, dat$Genes,seed = caret.seeds[i])
-    }
-
-    modelList[[yi]] <- csfr
-  }
-
-  names(modelList) <- allLabels
-  return(modelList)
-}
-
-#' @title fitEnsembleModel
-#' @description Train a single subtype model using cross validation
-#' @inheritParams fitSubtypeModel
-#' @param n Size of the ensember, where each member is a result from
-#'   fitSubtypeModel
-#' @param sampSize proportion of samples to hold back
-#' @param sampSeed random seed for subset of Xs
-#' @param numCores number of cores to use, one per ensemble member
-#' @importFrom parallel makeCluster clusterExport stopCluster parLapply
-#' @details The geneid of \code{geneSet} and \code{Xs} must be the same (one of
-#'   ENSEMBL, SYMBOL or ENTREZID).
-#' @return A list of lists of xgboost classifiers
-#' @export
-fitEnsembleModel <- function(Xs, Ys,
-                             geneSet = NULL,
-                             n=20,
-                             sampSize=0.7, sampSeed = 2020,
-                             breakVec=c(0, 0.25, 0.5, 0.75, 1.0),
-                             params=list(max_depth = 5,
-                                         eta = 0.5,
-                                         nrounds = 100,
-                                         nthread = 5,
-                                         nfold=5),
-                             caret.seed = 101,
-                             ptail=0.5,
-                             numCores=2) {
-
-  if(is.null(geneSet)){
-    geneSet = readRDS(system.file("extdata", paste0('PAD.train_20200110.rds'), package = "GSClassifier"))$geneSet
-    cat('PAD subtype training...', '\n')
-  }
-
-  cl <- makeCluster(numCores,  outfile='')
-
-  set.seed(sampSeed); seeds <- sample(1:100000,size=n,replace = F)
-
-  fitFun <- function(i) { # i = (1:20)[1]
-    modi <- c()
-    # set.seed(seeds[1]); jdx <- sample(1:ncol(Xs), size = sampSize * ncol(Xs), replace=F)
-    set.seed(seeds[i]); jdx <- sample(1:ncol(Xs), size = sampSize * ncol(Xs), replace=F)
-    Xs2 <- Xs[,jdx]
-    Ys2 <- Ys[jdx]
-    modi <- fitSubtypeModel(Xs=Xs2, Ys=Ys2,
-                            geneSet = geneSet,
-                            breakVec=breakVec,
-                            params=params,
-                            caret.seed = caret.seed,
-                            ptail=ptail)
-    return(modi)
-  }
-
-  clusterExport(cl, 'Xs',  envir=environment())
-  clusterExport(cl, 'Ys',  envir=environment())
-  clusterExport(cl, 'geneSet',  envir=environment())
-  clusterExport(cl, 'sampSize',  envir=environment())
-  clusterExport(cl, 'seeds',  envir=environment())
-  clusterExport(cl, 'caret.seed',  envir=environment())
-  clusterExport(cl, 'breakVec',  envir=environment())
-  clusterExport(cl, 'params',  envir=environment())
-  clusterExport(cl, 'ptail',  envir=environment())
-  clusterExport(cl, c('fitSubtypeModel','trainDataProc','cvFitOneModel','makeSetData','makeGenePairs','breakBin','binaryGene','featureSelection','testFun'),envir=environment())
-  clusterExport(cl, c('xgb.DMatrix','xgb.cv','xgboost','trainControl','train','xgb.train'),envir=environment())
-  clusterExport(cl, 'fitFun',  envir=environment())
-
-  ens <- parLapply(cl=cl, X=1:n, fun = fitFun)
-
-  res <- list(
-    Repeat = list(
-      Xs = Xs, Ys = Ys,
-      geneSet = geneSet,
-      n=n,
-      sampSize=sampSize, sampSeed = sampSeed,
-      breakVec=breakVec,
-      params=params,
-      ptail=ptail, numCores=numCores
-    ),
-    Model = ens
-  )
-
-  stopCluster(cl)
-
-  return(res)
-}
-
-
-
-
-
-
 
 

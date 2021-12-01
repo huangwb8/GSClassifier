@@ -1,7 +1,7 @@
 Package: GSClassifier
 Type: Package
 Title: Gene signature classification platform for multiple expression data
-Version: 0.1.8
+Version: 0.1.9
 Authors@R:
     person(given = "Weibin",
            family = "Huang",
