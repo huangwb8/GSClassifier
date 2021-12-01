@@ -27,7 +27,7 @@ Weibin Huang (黄伟斌);  <huangwb886@gmail.com>;  <a href="https://github.com/
 
 1. Guangdong Provincial Key Laboratory of Digestive Cancer Research, The Seventh Affiliated Hospital of Sun Yat-sen University, No. 628 Zhenyuan Road, Shenzhen, 518107, Guangdong, People’s Republic of China. Digestive Diseases Center
 
-2. Department of Gastrointestinal Surgery, the First Affiliated Hospital of Sun Yat-sen University, 58 Zhongshan 2nd Road, Guangzhou 510080, Guangdong, China
+2. Department of Gastrointestinal Surgery, the First Affiliated Hospital of Sun Yat-sen University, 58 Zhongshan 2nd Road, Guangzhou 510080, Guangdong, People’s Republic of China.
 
 ## :+1: Our papers
 
