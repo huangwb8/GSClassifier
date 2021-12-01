@@ -20,9 +20,6 @@
 
 Please go to [wiki](https://github.com/huangwb8/GSClassifier/wiki) for more details.
 
-## :eyes: Mirror
-
-+ [Gitee: for users from China or other countries/regions](https://gitee.com/huangwb8/GSClassifier)
 
 ## :alien: Authors
 
@@ -38,6 +35,10 @@ To be continued.
 
 1. Thorsson V, Gibbs D L, Brown S D, et al. The Immune Landscape of Cancer[J]. Immunity, 2018, 48(4): 812-830 e814.  DOI: 10.1016/j.immuni.2018.03.023
 2. Gibbs D L J B. Robust classification of Immune Subtypes in Cancer[J]. bioRxiv.  2020. DOI: 10.1101/2020.01.17.910950
+
+## :eyes: Mirror
+
+[Gitee: for users from China or other countries/regions](https://gitee.com/huangwb8/GSClassifier)
 
 <p align="center">
 <a href="https://github.com/huangwb8/GSClassifier"><img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/backgroud_for_GS_2.jpg?raw=true" width="900"> </a>
