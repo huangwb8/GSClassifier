@@ -136,7 +136,10 @@ fitEnsembleModel <- function(Xs, Ys,
       sampSize=sampSize, sampSeed = sampSeed,
       breakVec=breakVec,
       params=params,
-      ptail=ptail, numCores=numCores
+      caret.grid = caret.grid,
+      caret.seed = caret.seed,
+      ptail=ptail,
+      numCores=numCores
     ),
     Model = ens
   )
