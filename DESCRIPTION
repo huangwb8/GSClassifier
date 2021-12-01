@@ -1,6 +1,6 @@
 Package: GSClassifier
 Type: Package
-Title: Gene signature classification platform for multiple expression data
+Title: Gene Signature Classifier
 Version: 0.1.9
 Authors@R:
     person(given = "Weibin",
@@ -8,7 +8,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "654751191@qq.com",
            comment = c(ORCID = "0000-0003-0159-435X"))
-Description: A comprehensive category classification platform based on transcriptomics
+Description: A comprehensive classification tool based on pure transcriptomics for precision medicine
 License: Apache-2.0
 Encoding: UTF-8
 LazyData: true
