@@ -38,7 +38,7 @@ To be continued.
 
 ## :eyes: Mirror
 
-[Gitee: for users from China or other countries/regions](https://gitee.com/huangwb8/GSClassifier)
+[For users from special countries/regions](https://gitee.com/huangwb8/GSClassifier)
 
 <p align="center">
 <a href="https://github.com/huangwb8/GSClassifier"><img src="https://github.com/huangwb8/test_file/blob/master/GSClassifier/backgroud_for_GS_2.jpg?raw=true" width="900"> </a>
