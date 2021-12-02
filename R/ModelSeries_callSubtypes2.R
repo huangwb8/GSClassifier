@@ -37,9 +37,24 @@ callEnsemble <- function(X,
                          geneid = 'ensembl',
                          subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                          verbose = T) {
+
+  # Check whether the subtype is internal
+  if(is.character(subtype)|is.null(subtype)){
+    # Internal model
+    subtype = subtype
+  } else {
+    # External model
+    ens = subtype$ens$Model
+    geneAnnotation = subtype$geneAnnotation
+    geneSet = subtype$geneSet
+    scaller = subtype$scaller$Model
+    subtype = NULL
+  }
+
+  # Return a rignt format data
   X <- rightX(X)
 
-
+  # Subtype callings
   if (is.vector(X)) {
     # Single sample. Use one-type functions
     callEnsemble_One(
@@ -97,11 +112,12 @@ callEnsemble_One <- function(X,
     verbose = T
   }
 
-  ## Load model data
+  ## Load classifier data
   if (!is.null(subtype)) {
+
     # Use system data
-    if (verbose)
-      LuckyVerbose('Use ', subtype, ' classifier...')
+
+    LuckyVerbose('Use ', subtype, ' classifier...')
     l <-
       readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
     scaller <- l$scaller$Model
@@ -109,10 +125,10 @@ callEnsemble_One <- function(X,
     ens = l$ens$Model
     nClust = length(ens[[1]])
     geneSet = l$geneSet
+
   } else {
     # Use self-defined data
-    if (verbose)
-      LuckyVerbose('Use self-defined classifier...')
+    LuckyVerbose('Use self-defined classifier...')
     nClust = length(ens[[1]])
   }
 
@@ -173,9 +189,11 @@ callEnsemble_Multi <- function(X,
                                geneid = 'ensembl',
                                subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                                verbose = T) {
-  ## Load model data
+  ## Load classifier data
   if (!is.null(subtype)) {
+
     # Use system data
+
     LuckyVerbose('Use ', subtype, ' classifier...')
     l <-
       readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
@@ -184,6 +202,7 @@ callEnsemble_Multi <- function(X,
     ens = l$ens$Model
     nClust = length(ens[[1]])
     geneSet = l$geneSet
+
   } else {
     # Use self-defined data
     LuckyVerbose('Use self-defined classifier...')
@@ -253,9 +272,25 @@ parCallEnsemble <- function(X,
                             subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                             verbose = T,
                             numCores = 2) {
+
+  # Check whether the subtype is internal
+  if(is.character(subtype)|is.null(subtype)){
+    # Internal model
+    subtype = subtype
+  } else {
+    # External model
+    ens = subtype$ens$Model
+    geneAnnotation = subtype$geneAnnotation
+    geneSet = subtype$geneSet
+    scaller = subtype$scaller$Model
+    subtype = NULL
+  }
+
   ## Load classifier data
   if (!is.null(subtype)) {
+
     # Use system data
+
     LuckyVerbose('Use ', subtype, ' classifier...')
     l <-
       readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
@@ -264,6 +299,7 @@ parCallEnsemble <- function(X,
     ens = l$ens$Model
     nClust = length(ens[[1]])
     geneSet = l$geneSet
+
   } else {
     # Use self-defined data
     LuckyVerbose('Use self-defined classifier...')
