@@ -233,7 +233,7 @@ cvFitOneModel <- function(Xbin, Ybin,
                       verbose = verbose),
       error = function(e)e)
     if('message' %in% names(x)){
-      LuckyVerbose('Attention! AUC: the dataset only contains pos or neg samples. Repeat xgb.cv')
+      if(verbose) LuckyVerbose('Attention! AUC: the dataset only contains pos or neg samples. Repeat xgb.cv')
       x_error <- x
     } else {
       cvRes <- x
@@ -241,7 +241,7 @@ cvFitOneModel <- function(Xbin, Ybin,
     }
   }
 
-  LuckyVerbose('Best interation: ',cvRes$best_iteration)
+  if(verbose) LuckyVerbose('Best interation: ',cvRes$best_iteration)
 
   # xgboost via best interation
   bst <- xgboost(data = Xbin,
