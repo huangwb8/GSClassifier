@@ -277,7 +277,7 @@ cvFitOneModel2 <- function(Xbin, Ybin,
   cntrl <- trainControl(
     method = "cv",
     number = 5,
-    verboseIter = TRUE,
+    verboseIter = verbose,
     returnData = FALSE,
     returnResamp = "final"
   )
