@@ -13,7 +13,7 @@
 <a href="https://github.com/huangwb8/GSClassifier/issues"><img src="https://img.shields.io/github/issues-raw/huangwb8/GSClassifier"></a>
 </p>
 
-### A comprehensive  classification tool  based on pure transcriptomics for precision medicine
+### A comprehensive and expandable classification tool  based on pure transcriptomics for precision medicine
 
 
 ## :camel: Tutorial
