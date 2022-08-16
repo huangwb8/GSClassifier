@@ -23,7 +23,7 @@ Please go to [wiki](https://github.com/huangwb8/GSClassifier/wiki) for step-by-s
 
 ## :alien: Authors
 
-Weibin Huang (黄伟斌);  <huangwb886@gmail.com>;  <a href="https://github.com/huangwb8/test_file/blob/master/GSClassifier/pay.jpg?raw=true"><img src="https://img.shields.io/badge/say-thanks-ff69b4.svg"></a>
+Weibin Huang (黄伟斌);  <hwb2012@qq.com>;  <a href="https://github.com/huangwb8/test_file/blob/master/GSClassifier/pay.jpg?raw=true"><img src="https://img.shields.io/badge/say-thanks-ff69b4.svg"></a>
 
 1. Guangdong Provincial Key Laboratory of Digestive Cancer Research, The Seventh Affiliated Hospital of Sun Yat-sen University, No. 628 Zhenyuan Road, Shenzhen, 518107, Guangdong, China.
 

@@ -179,7 +179,7 @@ PAD <- function(
   PIDG <- PIDG[PIDG %in% coGene]
   PIAM <- PIAM[PIAM %in% coGene]
   x <- as.matrix(expr)[c(PIAM,PIDG),]
-  xZ <- t(scale(t(x),center = T,scale = T))
+  xZ <- t(scale(t(x),center = T, scale = T))
 
   ## PIAM subtypes
   if(T){
@@ -205,8 +205,8 @@ PAD <- function(
       set.seed(rF.para$seed[2]); pamRF <- pam(dissMat, k = rF.para$k[1])
       comp2 <- pamRF$clustering
     }
-    p1 <- sum(colMeans(xZ.piam[names(comp2)[comp2 == 1],]))
-    p2 <- sum(colMeans(xZ.piam[names(comp2)[comp2 == 2],]))
+    p1 <- sum(colMeans(xZ.piam[names(comp2)[comp2 == 1],], na.rm = T))
+    p2 <- sum(colMeans(xZ.piam[names(comp2)[comp2 == 2],], na.rm = T))
 
     if(p1>p2){
       id_high <- names(comp2)[comp2 == 1]
@@ -246,8 +246,8 @@ PAD <- function(
     }
 
     # Get high/low subgroup
-    p1 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 1],]))
-    p2 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 2],]))
+    p1 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 1],], na.rm = T))
+    p2 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 2],], na.rm = T))
 
     if(p1>p2){
       id_high <- names(comp2)[comp2 == 1]
