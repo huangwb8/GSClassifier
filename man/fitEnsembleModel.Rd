@@ -13,6 +13,7 @@ fitEnsembleModel(
   sampSeed = 2020,
   breakVec = c(0, 0.25, 0.5, 0.75, 1),
   params = list(max_depth = 5, eta = 0.5, nrounds = 100, nthread = 5, nfold = 5),
+  caret.grid = NULL,
   caret.seed = 101,
   ptail = 0.5,
   verbose = F,
@@ -49,7 +50,7 @@ fitSubtypeModel}
 A list of lists of xgboost classifiers
 }
 \description{
-Train a single subtype model using cross validation
+Train multiple subtype models using cross validation
 }
 \details{
 The geneid of \code{geneSet} and \code{Xs} must be the same (one of

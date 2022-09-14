@@ -27,6 +27,7 @@ Imports:
     grid,
     caret,
     ggplot2,
-    plyr
+    plyr,
+    rpart
 Depends: 
     luckyBase
