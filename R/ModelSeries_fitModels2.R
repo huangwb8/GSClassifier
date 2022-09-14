@@ -17,7 +17,8 @@
 #' nfold=5)
 #' @export
 fitSubtypeModel <- function(Xs, Ys,
-                            geneSet, na.fill = 'rpart',
+                            geneSet,
+                            na.fill = c('rpart', NULL)[1],
                             breakVec=c(0, 0.25, 0.5, 0.75, 1.0),
                             params=list(max_depth = 2,
                                         eta = 0.5,
@@ -35,10 +36,14 @@ fitSubtypeModel <- function(Xs, Ys,
   set.seed(caret.seed); caret.seeds <- sample(1:100000,size= length(unique(Ys)),replace = F)
 
   # NA filling with recursive partitioning and regression trees
-  if(ncol(Xs)>=3 & na.fill == 'rpart'){
-    if(verbose) LuckyVerbose('Missing data filled with RPART algorithm...')
-    Xs <- na_fill(Xs, method="anova", na.action = na.rpart)
+  if(!is.null(na.fill)){
+    # Do NA filling
+    if(ncol(Xs)>=3 & na.fill == 'rpart'){
+      if(verbose) LuckyVerbose('Missing data filled with RPART algorithm...')
+      Xs <- na_fill(Xs, method="anova", na.action = na.rpart)
+    }
   }
+
 
   # Model training
   for (i in 1:length(allLabels)) { # i=1
@@ -78,7 +83,8 @@ fitSubtypeModel <- function(Xs, Ys,
 #' @return A list of lists of xgboost classifiers
 #' @export
 fitEnsembleModel <- function(Xs, Ys,
-                             geneSet = NULL, na.fill = 'rpart',
+                             geneSet = NULL,
+                             na.fill = c('rpart', NULL)[1],
                              n = 20,
                              sampSize = 0.7, sampSeed = 2020,
                              breakVec =c(0, 0.25, 0.5, 0.75, 1.0),
@@ -98,12 +104,15 @@ fitEnsembleModel <- function(Xs, Ys,
   }
 
   # NA filling with recursive partitioning and regression trees
-  if(ncol(Xs)>=3 & na.fill == 'rpart'){
-    if(verbose) LuckyVerbose('Missing data filled with RPART algorithm...')
-    Xs <- na_fill(Xs, method="anova", na.action = na.rpart)
+  if(!is.null(na.fill)){
+    # Do NA filling
+    if(ncol(Xs)>=3 & na.fill == 'rpart'){
+      if(verbose) LuckyVerbose('Missing data filled with RPART algorithm...')
+      Xs <- na_fill(Xs, method="anova", na.action = na.rpart)
+    }
   }
 
-  # Parallel
+  # Parallel Cores
   cl <- makeCluster(numCores,  outfile='')
 
   # Seeds
@@ -127,7 +136,7 @@ fitEnsembleModel <- function(Xs, Ys,
     return(modi)
   }
 
-  # Parallel
+  # Parallel parameters
   clusterExport(cl, 'Xs',  envir=environment())
   clusterExport(cl, 'Ys',  envir=environment())
   clusterExport(cl, 'geneSet',  envir=environment())
@@ -140,13 +149,16 @@ fitEnsembleModel <- function(Xs, Ys,
   clusterExport(cl, 'ptail',  envir=environment())
   clusterExport(cl, 'verbose',  envir=environment())
   clusterExport(cl, 'caret.grid',  envir=environment())
-  clusterExport(cl, c('fitSubtypeModel','trainDataProc','cvFitOneModel','cvFitOneModel2','makeSetData','makeGenePairs','breakBin','binaryGene','featureSelection','testFun','na_fill','rpart'),envir=environment())
+  clusterExport(cl, c('fitSubtypeModel','trainDataProc','cvFitOneModel','cvFitOneModel2','makeSetData','makeGenePairs','breakBin','binaryGene','featureSelection','testFun'),envir=environment())
+  clusterExport(cl, c('na_fill','is.one.na','rpart','predict'),envir=environment())
   clusterExport(cl, c('xgb.DMatrix','xgb.cv','xgboost','trainControl','train','xgb.train','LuckyVerbose'),envir=environment())
   clusterExport(cl, 'fitFun',  envir=environment())
 
+  # Parallel process
   ens <- parLapply(cl=cl, X=1:n,
                    fun = function(x)fitFun(x,verbose=verbose))
 
+  # Output results
   res <- list(
     Repeat = list(
       Xs = Xs, Ys = Ys,
