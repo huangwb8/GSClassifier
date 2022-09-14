@@ -34,11 +34,13 @@ testFun <- function(rankg, Ybin) {
 #' Xsub <- featureSelection(Xmat, Ybin, 0.1)
 featureSelection <- function(Xmat, Ybin,
                              testRes,
-                             ptail=0.5) {
+                             ptail = 0.5,
+                             breakVec = c(0, 0.25, 0.5, 0.75, 1.0)) {
   idx <- which( (testRes < quantile(testRes, ptail, na.rm = T)) |
                   (testRes > quantile(testRes, 1.0-ptail, na.rm = T)) )
   Xsub <- Xmat[idx,]
-  Xsub[is.na(Xsub)] <- 0 # NA value would be turned as 0
+  # Xsub[is.na(Xsub)] <- 0 # NA value would be turned as 0
+  Xsub[is.na(Xsub)] <- sample(1:(length(breakVec)-1),sum(is.na(Xsub)),replace = T,prob = rep(1/(length(breakVec)-1), (length(breakVec)-1))) # NA value would be filled randomly
   Xgenes <- rownames(Xmat)[idx]
   return(list(Xsub=Xsub, Genes=Xgenes))
 }
@@ -171,7 +173,10 @@ trainDataProc <- function(Xmat, Yvec,
   testRes <- sapply(1:nrow(Xrank), function(gi) testFun(as.numeric(Xrank[gi,]), Ybin))  # get genes with big rank diffs.
 
   # subset the expression data for pairs
-  Xfeat <- featureSelection(Xmat, Ybin, testRes, ptail)  # subset genes
+  Xfeat <- featureSelection(Xmat, Ybin,
+                            testRes=testRes,
+                            ptail=ptail,
+                            breakVec=breakVec)  # subset genes
   Xpairs <- makeGenePairs(Xfeat$Genes, Xfeat$Xsub)
 
   # subset the binned genes
