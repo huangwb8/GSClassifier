@@ -127,7 +127,7 @@ fitEnsembleModel <- function(Xs, Ys,
   clusterExport(cl, 'ptail',  envir=environment())
   clusterExport(cl, 'verbose',  envir=environment())
   clusterExport(cl, 'caret.grid',  envir=environment())
-  clusterExport(cl, c('fitSubtypeModel','trainDataProc','cvFitOneModel','cvFitOneModel2','makeSetData','makeGenePairs','breakBin','binaryGene','featureSelection','testFun'),envir=environment())
+  clusterExport(cl, c('fitSubtypeModel','trainDataProc','cvFitOneModel','cvFitOneModel2','makeSetData','makeGenePairs','breakBin','binaryGene','featureSelection','testFun','na_fill','rpart'),envir=environment())
   clusterExport(cl, c('xgb.DMatrix','xgb.cv','xgboost','trainControl','train','xgb.train','LuckyVerbose'),envir=environment())
   clusterExport(cl, 'fitFun',  envir=environment())
 
