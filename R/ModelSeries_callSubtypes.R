@@ -120,6 +120,9 @@ dataProc <- function(X,
   # working with matrices
   Xmat <- as.matrix(X)
 
+  # NA filling with recursive partitioning and regression trees
+  # Xmat <- na_fill(Xmat, method="anova", na.action = na.rpart)
+
   # Set features
   nGS <- length(geneSet)
   featureNames <- c()
