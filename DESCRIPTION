@@ -6,7 +6,7 @@ Authors@R:
     person(given = "Weibin",
            family = "Huang",
            role = c("aut", "cre"),
-           email = "654751191@qq.com",
+           email = "hwb2012@qq.com",
            comment = c(ORCID = "0000-0003-0159-435X"))
 Description: A comprehensive classification tool based on pure transcriptomics for precision medicine
 License: Apache-2.0
