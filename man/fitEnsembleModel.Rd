@@ -28,7 +28,7 @@ fitEnsembleModel(
 
 \item{geneSet}{A list of genes for classification}
 
-\item{na.fill}{NA filling. One of 'rpart'.}
+\item{na.fill}{NA filling. One of 'rpart' or \code{NULL}.}
 
 \item{n}{Size of the ensember, where each member is a result from
 fitSubtypeModel}

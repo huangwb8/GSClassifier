@@ -80,7 +80,6 @@ featureSelection <- function(Xmat, Ybin,
                (testRes > quantile(testRes, 1.0-ptail, na.rm = T)) )
   Xsub <- Xmat[idx,]
   Xsub[is.na(Xsub)] <- 0 # NA value would be turned as 0
-  # Xsub <- na_fill(Xsub, method="anova", na.action = na.rpart) # NA filling with recursive partitioning and regression trees
   Xgenes <- rownames(Xmat)[idx]
   return(list(Xsub=Xsub, Genes=Xgenes))
 }

@@ -4,7 +4,7 @@
 #' @param Xs Gene expression matrix.
 #' @param Ys Phenotype vector, multiclass
 #' @param caret.seed The random seed for caret::train process when \code{params} is \code{NULL}
-#' @param na.fill NA filling. One of 'rpart'.
+#' @param na.fill NA filling. One of 'rpart' or \code{NULL}.
 #' @inheritParams cvFitOneModel
 #' @inheritParams trainDataProc
 #' @return A list of xgboost classifiers, one for each subtype.
