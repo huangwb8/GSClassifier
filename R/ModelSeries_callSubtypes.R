@@ -33,7 +33,8 @@ createPairsFeatures <- function(X, genes) {
       rownames(Xsub) <- gs                  ## give gene IDs
       res0 <- lapply(1:ncol(Xsub), function(a) binaryGene(pval[a], Xsub[,a]))  ## create binary values
       resList[[gi]] <- do.call('cbind', res0)
-    } else { # else we need to include some dummy rows
+    } else {
+      # else we need to include some dummy rows
       randMat <- matrix(data=rbinom(n = length(pairList[[gi]]) * ncol(X), prob = 0.5, 1), ncol=ncol(X))
       colnames(randMat) <- colnames(X)
       resList[[gi]] <- randMat

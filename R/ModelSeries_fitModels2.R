@@ -30,9 +30,15 @@ fitSubtypeModel <- function(Xs, Ys,
   modelList <- list()
   allLabels <- unique(Ys)
 
+  # Set seeds
   set.seed(caret.seed); caret.seeds <- sample(1:100000,size= length(unique(Ys)),replace = F)
 
+  # NA filling with recursive partitioning and regression trees
+  if(ncol(Xs)>=3){
+    Xs <- na_fill(Xs, method="anova", na.action = na.rpart)
+  }
 
+  # Model training
   for (i in 1:length(allLabels)) { # i=1
 
     yi = allLabels[i]

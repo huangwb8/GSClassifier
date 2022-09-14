@@ -204,7 +204,8 @@ trainDataProc <- function(Xmat, Yvec,
   Ybin <- ifelse(Yvec == subtype, yes = 1, no=0)
 
   # NA filling with recursive partitioning and regression trees
-  Xmat <- na_fill(Xmat, method="anova", na.action = na.rpart)
+  # Attention! This would make the model training more time-consuming. This step could be done in the begining of GSClassfier::fitSubtypeModel
+  # Xmat <- na_fill(Xmat, method="anova", na.action = na.rpart)
 
   # bin the expression data
   Xbinned <- apply(Xmat, 2, breakBin, breakVec) # bin each column
