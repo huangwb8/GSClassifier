@@ -39,7 +39,7 @@ na_fill <- function(Xmat,
   }
 
   # anyNA(Xmat_2) # FALSE
-  return(as.data.frame(t(Xmat_2)))
+  return(t(Xmat_2))
   # ?rpart::rpart
   # ?base::anyNA
 }

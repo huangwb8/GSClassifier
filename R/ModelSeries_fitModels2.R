@@ -155,6 +155,7 @@ fitEnsembleModel <- function(Xs, Ys,
   clusterExport(cl, 'fitFun',  envir=environment())
 
   # Parallel process
+  if(verbose) LuckyVerbose('Start parallel process...')
   ens <- parLapply(cl=cl, X=1:n,
                    fun = function(x)fitFun(x,verbose=verbose))
 
@@ -175,6 +176,7 @@ fitEnsembleModel <- function(Xs, Ys,
     Model = ens
   )
 
+  if(verbose) LuckyVerbose('End parallel process!')
   stopCluster(cl)
 
   return(res)
