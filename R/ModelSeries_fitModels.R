@@ -13,6 +13,7 @@
 #' @author Weibin Huang<\email{654751191@@qq.com}>
 #' @examples
 #' Xmat_without_NA <- na_fill(Xmat)
+#' @export
 na_fill <- function(Xmat,
                     method="anova",
                     na.action = na.omit){
