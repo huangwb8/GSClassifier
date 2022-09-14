@@ -8,6 +8,7 @@ fitEnsembleModel(
   Xs,
   Ys,
   geneSet = NULL,
+  na.fill = "rpart",
   n = 20,
   sampSize = 0.7,
   sampSeed = 2020,
@@ -26,6 +27,8 @@ fitEnsembleModel(
 \item{Ys}{Phenotype vector, multiclass}
 
 \item{geneSet}{A list of genes for classification}
+
+\item{na.fill}{NA filling. One of 'rpart'.}
 
 \item{n}{Size of the ensember, where each member is a result from
 fitSubtypeModel}

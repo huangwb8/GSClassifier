@@ -4,6 +4,7 @@
 #' @param Xs Gene expression matrix.
 #' @param Ys Phenotype vector, multiclass
 #' @param caret.seed The random seed for caret::train process when \code{params} is \code{NULL}
+#' @param na.fill NA filling. One of 'rpart'.
 #' @inheritParams cvFitOneModel
 #' @inheritParams trainDataProc
 #' @return A list of xgboost classifiers, one for each subtype.
@@ -16,7 +17,7 @@
 #' nfold=5)
 #' @export
 fitSubtypeModel <- function(Xs, Ys,
-                            geneSet,
+                            geneSet, na.fill = 'rpart',
                             breakVec=c(0, 0.25, 0.5, 0.75, 1.0),
                             params=list(max_depth = 2,
                                         eta = 0.5,
@@ -34,7 +35,8 @@ fitSubtypeModel <- function(Xs, Ys,
   set.seed(caret.seed); caret.seeds <- sample(1:100000,size= length(unique(Ys)),replace = F)
 
   # NA filling with recursive partitioning and regression trees
-  if(ncol(Xs)>=3){
+  if(ncol(Xs)>=3 & na.fill == 'rpart'){
+    if(verbose) LuckyVerbose('Missing data filled with RPART algorithm...')
     Xs <- na_fill(Xs, method="anova", na.action = na.rpart)
   }
 
@@ -76,7 +78,7 @@ fitSubtypeModel <- function(Xs, Ys,
 #' @return A list of lists of xgboost classifiers
 #' @export
 fitEnsembleModel <- function(Xs, Ys,
-                             geneSet = NULL,
+                             geneSet = NULL, na.fill = 'rpart',
                              n = 20,
                              sampSize = 0.7, sampSeed = 2020,
                              breakVec =c(0, 0.25, 0.5, 0.75, 1.0),
@@ -95,10 +97,19 @@ fitEnsembleModel <- function(Xs, Ys,
     LuckyVerbose('PAD subtype training...')
   }
 
+  # NA filling with recursive partitioning and regression trees
+  if(ncol(Xs)>=3 & na.fill == 'rpart'){
+    if(verbose) LuckyVerbose('Missing data filled with RPART algorithm...')
+    Xs <- na_fill(Xs, method="anova", na.action = na.rpart)
+  }
+
+  # Parallel
   cl <- makeCluster(numCores,  outfile='')
 
+  # Seeds
   set.seed(sampSeed); seeds <- sample(1:100000,size=n,replace = F)
 
+  # Assistant function
   fitFun <- function(i, verbose) { # i = (1:n)[1]
     modi <- c()
     set.seed(seeds[i]); jdx <- sample(1:ncol(Xs), size = sampSize * ncol(Xs), replace=F)
@@ -106,7 +117,7 @@ fitEnsembleModel <- function(Xs, Ys,
     Ys2 <- Ys[jdx]
     modi <- fitSubtypeModel(
       Xs=Xs2, Ys=Ys2,
-      geneSet = geneSet,
+      geneSet = geneSet, na.fill = NULL,
       breakVec = breakVec,
       params = params,
       caret.grid = NULL, caret.seed = caret.seed,
@@ -116,9 +127,11 @@ fitEnsembleModel <- function(Xs, Ys,
     return(modi)
   }
 
+  # Parallel
   clusterExport(cl, 'Xs',  envir=environment())
   clusterExport(cl, 'Ys',  envir=environment())
   clusterExport(cl, 'geneSet',  envir=environment())
+  clusterExport(cl, 'na.fill',  envir=environment())
   clusterExport(cl, 'sampSize',  envir=environment())
   clusterExport(cl, 'seeds',  envir=environment())
   clusterExport(cl, 'caret.seed',  envir=environment())
