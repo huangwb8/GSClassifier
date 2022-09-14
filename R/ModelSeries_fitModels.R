@@ -80,12 +80,11 @@ testFun <- function(rankg, Ybin) {
 featureSelection <- function(Xmat, Ybin,
                              testRes,
                              ptail = 0.5) {
-  idx <- which( (testRes < quantile(testRes, ptail, na.rm = T)) |
-                  (testRes > quantile(testRes, 1.0-ptail, na.rm = T)) )
+  idx <- which((testRes < quantile(testRes, ptail, na.rm = T)) |
+               (testRes > quantile(testRes, 1.0-ptail, na.rm = T)) )
   Xsub <- Xmat[idx,]
   # Xsub[is.na(Xsub)] <- 0 # NA value would be turned as 0
-  # Xsub[is.na(Xsub)] <- sample(1:(length(breakVec)-1),sum(is.na(Xsub)),replace = T,prob = rep(1/(length(breakVec)-1), (length(breakVec)-1))) # NA value would be filled randomly
-  Xsub <- na_fill(Xsub, method="anova", na.action = na.rpart)
+  Xsub <- na_fill(Xsub, method="anova", na.action = na.rpart) # NA filling with recursive partitioning and regression trees
   Xgenes <- rownames(Xmat)[idx]
   return(list(Xsub=Xsub, Genes=Xgenes))
 }
