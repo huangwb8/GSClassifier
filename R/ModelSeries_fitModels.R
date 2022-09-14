@@ -8,7 +8,7 @@
 #' @param Xmat a gene expression matrix with NA value
 #' @inheritParams rpart::rpart
 #' @importFrom luckyBase is.one.na
-#' @importFrom rpart rpart
+#' @import rpart
 #' @seealso \code{\link[rpart]{rpart}}
 #' @author Weibin Huang<\email{654751191@@qq.com}>
 #' @examples
