@@ -47,7 +47,6 @@ na_fill <- function(Xmat,
   # ?base::anyNA
 }
 
-
 #' @description Get difference in mean rank sums (Ybin=0 vs. 1) for a single
 #'   gene
 #' @param rankg Gene expression profile for single sample
@@ -83,8 +82,8 @@ featureSelection <- function(Xmat, Ybin,
   idx <- which((testRes < quantile(testRes, ptail, na.rm = T)) |
                (testRes > quantile(testRes, 1.0-ptail, na.rm = T)) )
   Xsub <- Xmat[idx,]
-  # Xsub[is.na(Xsub)] <- 0 # NA value would be turned as 0
-  Xsub <- na_fill(Xsub, method="anova", na.action = na.rpart) # NA filling with recursive partitioning and regression trees
+  Xsub[is.na(Xsub)] <- 0 # NA value would be turned as 0
+  # Xsub <- na_fill(Xsub, method="anova", na.action = na.rpart) # NA filling with recursive partitioning and regression trees
   Xgenes <- rownames(Xmat)[idx]
   return(list(Xsub=Xsub, Genes=Xgenes))
 }
@@ -207,6 +206,9 @@ trainDataProc <- function(Xmat, Yvec,
 
   # Create the binary subtype identifier
   Ybin <- ifelse(Yvec == subtype, yes = 1, no=0)
+
+  # NA filling with recursive partitioning and regression trees
+  Xmat <- na_fill(Xmat, method="anova", na.action = na.rpart)
 
   # bin the expression data
   Xbinned <- apply(Xmat, 2, breakBin, breakVec) # bin each column
