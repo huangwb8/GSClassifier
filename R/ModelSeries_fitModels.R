@@ -3,6 +3,51 @@
 
 ####====================Basic function==================####
 
+#' @title NA filling with recursive partitioning and regression trees
+#' @description NA filling with recursive partitioning and regression trees
+#' @param Xmat a gene expression matrix with NA value
+#' @inheritParams rpart::rpart
+#' @importFrom luckyBase is.one.na
+#' @importFrom rpart rpart
+#' @seealso \code{\link[rpart]{rpart}}
+#' @author Weibin Huang<\email{654751191@@qq.com}>
+#' @examples
+#' Xmat_without_NA <- na_fill(Xmat)
+na_fill <- function(Xmat,
+                    method="anova",
+                    na.action = na.omit){
+
+  na.pos <- apply(Xmat,2,is.one.na)
+
+  ## Test whether there're some NAs
+  if( T %in% na.pos){
+
+    # With NA value
+    Xmat_2 <- Xmat
+    Xmat_2 <- as.data.frame(Xmat_2)
+    na.marker <- names(na.pos)[na.pos]
+    for(i in 1:length(na.marker)){ # i=1
+      m.i <- na.marker[i] # m.i
+      f.i <- as.formula(paste0(m.i," ~ ."))
+      Xmat.i <- Xmat_2[!is.na(Xmat_2[,m.i]),]
+      Xmat.i.na <- Xmat_2[is.na(Xmat_2[,m.i]),]
+      anova_mod <- rpart(f.i, data=Xmat.i, method=method, na.action=na.action)
+      anova_pred <- predict(anova_mod,Xmat.i.na) # View(Xmat_2[is.na(Xmat_2[,m.i]),])
+      Xmat_2[rownames(Xmat.i.na),m.i] <- anova_pred
+    }
+  } else {
+
+    # Without NA value
+    Xmat_2 <- Xmat
+  }
+
+  # anyNA(Xmat_2) # FALSE
+  return(as.matrix(Xmat_2))
+  # ?rpart::rpart
+  # ?base::anyNA
+}
+
+
 #' @description Get difference in mean rank sums (Ybin=0 vs. 1) for a single
 #'   gene
 #' @param rankg Gene expression profile for single sample
@@ -34,13 +79,13 @@ testFun <- function(rankg, Ybin) {
 #' Xsub <- featureSelection(Xmat, Ybin, 0.1)
 featureSelection <- function(Xmat, Ybin,
                              testRes,
-                             ptail = 0.5,
-                             breakVec = c(0, 0.25, 0.5, 0.75, 1.0)) {
+                             ptail = 0.5) {
   idx <- which( (testRes < quantile(testRes, ptail, na.rm = T)) |
                   (testRes > quantile(testRes, 1.0-ptail, na.rm = T)) )
   Xsub <- Xmat[idx,]
   # Xsub[is.na(Xsub)] <- 0 # NA value would be turned as 0
-  Xsub[is.na(Xsub)] <- sample(1:(length(breakVec)-1),sum(is.na(Xsub)),replace = T,prob = rep(1/(length(breakVec)-1), (length(breakVec)-1))) # NA value would be filled randomly
+  # Xsub[is.na(Xsub)] <- sample(1:(length(breakVec)-1),sum(is.na(Xsub)),replace = T,prob = rep(1/(length(breakVec)-1), (length(breakVec)-1))) # NA value would be filled randomly
+  Xsub <- na_fill(Xsub, method="anova", na.action = na.rpart)
   Xgenes <- rownames(Xmat)[idx]
   return(list(Xsub=Xsub, Genes=Xgenes))
 }
@@ -175,8 +220,7 @@ trainDataProc <- function(Xmat, Yvec,
   # subset the expression data for pairs
   Xfeat <- featureSelection(Xmat, Ybin,
                             testRes=testRes,
-                            ptail=ptail,
-                            breakVec=breakVec)  # subset genes
+                            ptail=ptail)  # subset genes
   Xpairs <- makeGenePairs(Xfeat$Genes, Xfeat$Xsub)
 
   # subset the binned genes
