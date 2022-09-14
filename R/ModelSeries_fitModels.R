@@ -17,13 +17,13 @@ na_fill <- function(Xmat,
                     method="anova",
                     na.action = na.omit){
 
-  na.pos <- apply(Xmat,2,is.one.na)
+  Xmat_2 <- t(Xmat)
+  na.pos <- apply(Xmat_2,2,is.one.na)
 
   ## Test whether there're some NAs
-  if( T %in% na.pos){
+  if(T %in% na.pos){
 
     # With NA value
-    Xmat_2 <- Xmat
     Xmat_2 <- as.data.frame(Xmat_2)
     na.marker <- names(na.pos)[na.pos]
     for(i in 1:length(na.marker)){ # i=1
@@ -35,14 +35,10 @@ na_fill <- function(Xmat,
       anova_pred <- predict(anova_mod,Xmat.i.na) # View(Xmat_2[is.na(Xmat_2[,m.i]),])
       Xmat_2[rownames(Xmat.i.na),m.i] <- anova_pred
     }
-  } else {
-
-    # Without NA value
-    Xmat_2 <- Xmat
   }
 
   # anyNA(Xmat_2) # FALSE
-  return(as.matrix(Xmat_2))
+  return(t(Xmat_2))
   # ?rpart::rpart
   # ?base::anyNA
 }
