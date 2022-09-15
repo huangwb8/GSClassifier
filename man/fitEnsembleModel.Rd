@@ -8,7 +8,8 @@ fitEnsembleModel(
   Xs,
   Ys,
   geneSet = NULL,
-  na.fill = "rpart",
+  na.fill.method = c("quantile", "rpart", NULL)[1],
+  na.fill.seed = 2022,
   n = 20,
   sampSize = 0.7,
   sampSeed = 2020,
@@ -28,7 +29,9 @@ fitEnsembleModel(
 
 \item{geneSet}{A list of genes for classification}
 
-\item{na.fill}{NA filling. One of 'rpart' or \code{NULL}.}
+\item{na.fill.method}{Missing value imputation method for \code{\link{na_fill}} function. One of \code{'quantile'}, \code{'rpart'} and \code{NULL}.}
+
+\item{na.fill.seed}{Seed for \code{\link{na_fill}} function.}
 
 \item{n}{Size of the ensember, where each member is a result from
 fitSubtypeModel}
@@ -57,5 +60,5 @@ Train multiple subtype models using cross validation
 }
 \details{
 The geneid of \code{geneSet} and \code{Xs} must be the same (one of
-  ENSEMBL, SYMBOL or ENTREZID).
+  ENSEMBL, SYMBOL or ENTREZID). In addition, if \code{fitEnsembleModel} is hanged on, please check the space use of \code{/}, which would disturb the work of \code{\link[parallel]{makeCluster}}.
 }

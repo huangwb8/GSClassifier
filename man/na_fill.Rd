@@ -4,35 +4,20 @@
 \alias{na_fill}
 \title{NA filling with recursive partitioning and regression trees}
 \usage{
-na_fill(Xmat, method = "anova", na.action = na.omit)
+na_fill(
+  Xmat,
+  method = c("quantile", "rpart", NULL)[1],
+  seed = 2022,
+  verbose = T
+)
 }
 \arguments{
-\item{Xmat}{a gene expression matrix with NA value}
+\item{Xmat}{A gene expression matrix with NA value}
 
-\item{method}{one of \code{"anova"}, \code{"poisson"}, \code{"class"}
-    or \code{"exp"}.  If \code{method} is missing then the routine tries
-    to make an intelligent guess.
-    If \code{y} is a survival object, then \code{method = "exp"} is assumed,
-    if \code{y} has 2 columns then \code{method = "poisson"} is assumed,
-    if \code{y} is a factor then \code{method = "class"} is assumed,
-    otherwise \code{method = "anova"} is assumed.
-    It is wisest to specify the method directly, especially as more
-    criteria may added to the function in future.
-
-    Alternatively, \code{method} can be a list of functions named
-    \code{init}, \code{split} and \code{eval}.  Examples are given in
-    the file \file{tests/usersplits.R} in the sources, and in the
-    vignettes \sQuote{User Written Split Functions}.}
-
-\item{na.action}{the default action deletes all observations for which
-    \code{y} is missing, but keeps those in which one or more predictors
-    are missing.}
+\item{method}{One of \code{'quantile'}, \code{'rpart'} and \code{NULL}.}
 }
 \description{
 NA filling with recursive partitioning and regression trees
-}
-\examples{
-Xmat_without_NA <- na_fill(Xmat)
 }
 \seealso{
 \code{\link[rpart]{rpart}}

@@ -5,7 +5,8 @@
 #' @param Xs Gene expression matrix.
 #' @param Ys Phenotype vector, multiclass
 #' @param caret.seed The random seed for caret::train process when \code{params} is \code{NULL}
-#' @param na.fill NA filling. One of 'rpart' or \code{NULL}.
+#' @param na.fill.method Missing value imputation method for \code{\link{na_fill}} function. One of \code{'quantile'}, \code{'rpart'} and \code{NULL}.
+#' @param na.fill.seed Seed for \code{\link{na_fill}} function.
 #' @inheritParams cvFitOneModel
 #' @inheritParams trainDataProc
 #' @return A list of xgboost classifiers, one for each subtype.
@@ -20,7 +21,8 @@
 fitSubtypeModel <- function(Xs,
                             Ys,
                             geneSet,
-                            na.fill = c('rpart', NULL)[1],
+                            na.fill.method = c('quantile','rpart',NULL)[1],
+                            na.fill.seed=2022,
                             breakVec = c(0, 0.25, 0.5, 0.75, 1.0),
                             params = list(
                               max_depth = 2,
@@ -41,16 +43,11 @@ fitSubtypeModel <- function(Xs,
   caret.seeds <-
     sample(1:100000, size = length(unique(Ys)), replace = F)
 
-  # NA filling with recursive partitioning and regression trees
-  if (!is.null(na.fill)) {
-    # Do NA filling
-    if (ncol(Xs) >= 3 & na.fill == 'rpart') {
-      if (verbose)
-        LuckyVerbose('Missing data filled with RPART algorithm...')
-      Xs <- na_fill(Xs, method = "anova", na.action = na.rpart)
-    }
-  }
-
+  # Missing value imputation
+  Xs <- na_fill(Xs,
+                method = na.fill.method,
+                seed = na.fill.seed,
+                verbose = verbose)
 
   # Model training
   for (i in 1:length(allLabels)) {
@@ -112,14 +109,15 @@ fitSubtypeModel <- function(Xs,
 #' @param numCores number of cores to use, one per ensemble member
 #' @importFrom parallel makeCluster clusterExport stopCluster parLapply
 #' @details The geneid of \code{geneSet} and \code{Xs} must be the same (one of
-#'   ENSEMBL, SYMBOL or ENTREZID). In addition, if \code{fitEnsembleModel} is hanged on, please check the space use of \code{/}, which would disturb the work of \code[parallel]{makeCluster}.
+#'   ENSEMBL, SYMBOL or ENTREZID). In addition, if \code{fitEnsembleModel} is hanged on, please check the space use of \code{/}, which would disturb the work of \code{\link[parallel]{makeCluster}}.
 
 #' @return A list of lists of xgboost classifiers
 #' @export
 fitEnsembleModel <- function(Xs,
                              Ys,
                              geneSet = NULL,
-                             na.fill = c('rpart', NULL)[1],
+                             na.fill.method = c('quantile','rpart',NULL)[1],
+                             na.fill.seed=2022,
                              n = 20,
                              sampSize = 0.7,
                              sampSeed = 2020,
@@ -141,20 +139,14 @@ fitEnsembleModel <- function(Xs,
     LuckyVerbose('PAD subtype training...')
   }
 
-  # NA filling with recursive partitioning and regression trees
-  if (!is.null(na.fill)) {
-    # Do NA filling
-    if (ncol(Xs) >= 3 & na.fill == 'rpart') {
-      if (verbose)
-        LuckyVerbose('Missing data filled with RPART algorithm...')
-      Xs <- na_fill(Xs, method = "anova", na.action = na.rpart)
-    }
-  }
+  # Missing value imputation
+  Xs <- na_fill(Xs,
+                method = na.fill.method,
+                seed = na.fill.seed,
+                verbose = verbose)
 
-  # Parallel Cores
-  if (verbose)
-    LuckyVerbose('Start parallel process...')
-  # https://stackoverflow.com/questions/21773199/r-makecluster-hangs-on-localhost-in-linux
+  # Parallel Cores # https://stackoverflow.com/questions/21773199/r-makecluster-hangs-on-localhost-in-linux
+  if (verbose) LuckyVerbose('Start parallel process...')
   cl <- makeCluster(numCores,  outfile = '')
 
   # Seeds
@@ -173,7 +165,8 @@ fitEnsembleModel <- function(Xs,
       Xs = Xs2,
       Ys = Ys2,
       geneSet = geneSet,
-      na.fill = NULL,
+      na.fill.method = NULL,
+      na.fill.seed = na.fill.seed,
       breakVec = breakVec,
       params = params,
       caret.grid = caret.grid,
@@ -188,7 +181,8 @@ fitEnsembleModel <- function(Xs,
   clusterExport(cl, 'Xs',  envir = environment())
   clusterExport(cl, 'Ys',  envir = environment())
   clusterExport(cl, 'geneSet',  envir = environment())
-  clusterExport(cl, 'na.fill',  envir = environment())
+  clusterExport(cl, 'na.fill.method',  envir = environment())
+  clusterExport(cl, 'na.fill.seed',  envir = environment())
   clusterExport(cl, 'sampSize',  envir = environment())
   clusterExport(cl, 'seeds',  envir = environment())
   clusterExport(cl, 'caret.seed',  envir = environment())

@@ -5,18 +5,44 @@
 
 #' @title NA filling with recursive partitioning and regression trees
 #' @description NA filling with recursive partitioning and regression trees
-#' @param Xmat a gene expression matrix with NA value
-#' @inheritParams rpart::rpart
+#' @param Xmat A gene expression matrix with NA value
+#' @param method One of \code{'quantile'}, \code{'rpart'} and \code{NULL}.
 #' @importFrom luckyBase is.one.na
 #' @import rpart
 #' @seealso \code{\link[rpart]{rpart}}
 #' @author Weibin Huang<\email{654751191@@qq.com}>
-#' @examples
-#' Xmat_without_NA <- na_fill(Xmat)
 #' @export
 na_fill <- function(Xmat,
-                    method="anova",
-                    na.action = na.omit){
+                    method=c('quantile','rpart',NULL)[1],
+                    seed=2022,
+                    verbose=T){
+
+  if(is.null(method)){
+
+    if(verbose) LuckyVerbose('Without missing value imputation... ')
+    Xmat
+
+  } else if(method == 'rpart'){
+    if(verbose) LuckyVerbose('Missing value imputation with RPART algorithm...')
+    na_fill_rpart(Xmat,
+                  method="anova",
+                  na.action = na.rpart)
+
+  } else if(method == 'quantile'){
+    if(verbose) LuckyVerbose('Missing value imputation with quantile algorithm...')
+    na_fill_quantile(Xmat,seed)
+
+  } else {
+    if(verbose) LuckyVerbose('Without missing value imputation... ')
+    Xmat
+  }
+}
+
+#' @inheritParams rpart::rpart
+#' @inheritParams na_fill
+na_fill_rpart <- function(Xmat,
+                          method="anova",
+                          na.action = na.omit){
 
   Xmat_2 <- t(Xmat)
   na.pos <- apply(Xmat_2,2,is.one.na)
@@ -43,6 +69,41 @@ na_fill <- function(Xmat,
   # ?rpart::rpart
   # ?base::anyNA
 }
+
+#' @inheritParams na_fill
+na_fill_quantile <- function(Xmat,
+                             seed=2022){
+
+  # Test
+  if(F){
+    testData <- readRDS(system.file("extdata", "testData.rds", package = "GSClassifier"))
+    Xmat <- testData$PanSTAD_expr_part
+  }
+
+  na.pos <- apply(Xmat,2,is.one.na)
+  set.seed(seed); seeds <- sample(1:ncol(Xmat)*10, sum(na.pos), replace = F)
+  tSample <- names(na.pos)[na.pos]
+  quantile_vector <- (1:1000)/1000
+
+  for(i in 1:length(tSample)){ # i=1
+
+    sample.i <- tSample[i]
+    expr.i <- Xmat[, sample.i]
+    expr.i.max <- max(expr.i, na.rm = T)
+    expr.i.min <- min(expr.i, na.rm = T)
+    set.seed(seeds[i]);
+    expr.i[is.na(expr.i)] <-
+      expr.i.min +
+      (expr.i.max-expr.i.min) * sample(quantile_vector,
+                                       sum(is.na(expr.i)),
+                                       replace = T)
+    Xmat[, sample.i] <- expr.i
+  }
+
+  return(Xmat)
+
+}
+
 
 #' @description Get difference in mean rank sums (Ybin=0 vs. 1) for a single
 #'   gene
@@ -266,6 +327,7 @@ cvFitOneModel <- function(Xbin, Ybin,
   dtrain <- xgb.DMatrix(Xbin, label = Ybin)
 
   # xgb.cv
+  # WARNING: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'binary:logistic' was changed from 'error' to 'logloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
   for(i in 1:10000){
     x <- tryCatch(
       cvRes <- xgb.cv(data = dtrain,
@@ -275,7 +337,7 @@ cvFitOneModel <- function(Xbin, Ybin,
                       max_depth=params$max_depth,
                       eta=params$eta,
                       early_stopping_rounds=2,
-                      metrics = list("error", "auc"),
+                      metrics = list("error", "auc"), # 'logloss' instead of 'error'
                       objective = "binary:logistic",
                       verbose = verbose),
       error = function(e)e)
