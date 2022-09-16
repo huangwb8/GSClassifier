@@ -18,7 +18,9 @@
 
 ## :camel: Tutorial
 
-Please go to [wiki](https://github.com/huangwb8/GSClassifier/wiki) for step-by-step guides.
+> [Github wiki](https://github.com/huangwb8/GSClassifier/wiki) of GSClassifier would be still online but not maintained anymore.
+
+Please go to [eBook](https://huangwb8.github.io/GSClassifier.principle/) for step-by-step guides.
 
 
 ## :alien: Authors
