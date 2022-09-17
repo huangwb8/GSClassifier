@@ -1,6 +1,6 @@
 
 
-
+#' @title mv_tolerance
 #' @description Missing value tolerance analysis for \code{GSClassifier} models
 #' @param X a data frame with the number of colume ≥ 2
 #' @param gene.loss a vector of the number of genes masked
