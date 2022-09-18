@@ -35,6 +35,10 @@ Weibin Huang (黄伟斌);  <hwb2012@qq.com>;  <a href="https://github.com/huangw
 
 To be continued.
 
+## :cd: License
+
+**GSClassifier** is released under the Apache-2.0 license. See [LICENSE](https://github.com/huangwb8/GSClassifier/blob/master/license.txt) for details.
+
 ## :star: Reference
 
 1. Thorsson V, Gibbs D L, Brown S D, et al. The Immune Landscape of Cancer[J]. Immunity, 2018, 48(4): 812-830 e814.  DOI: 10.1016/j.immuni.2018.03.023
