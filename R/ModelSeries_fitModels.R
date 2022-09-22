@@ -19,21 +19,21 @@ na_fill <- function(Xmat,
 
   if(is.null(method)){
 
-    if(verbose) LuckyVerbose('Without missing value imputation... ')
+    if(verbose) LuckyVerbose('Ignore missing value imputation.')
     Xmat
 
   } else if(method == 'rpart'){
-    if(verbose) LuckyVerbose('Missing value imputation with RPART algorithm...')
+    if(verbose) LuckyVerbose('Missing value imputation with RPART algorithm!')
     na_fill_rpart(Xmat,
                   method="anova",
                   na.action = na.rpart)
 
   } else if(method == 'quantile'){
-    if(verbose) LuckyVerbose('Missing value imputation with quantile algorithm...')
+    if(verbose) LuckyVerbose('Missing value imputation with quantile algorithm!')
     na_fill_quantile(Xmat,seed)
 
   } else {
-    if(verbose) LuckyVerbose('Without missing value imputation... ')
+    if(verbose) LuckyVerbose('Without missing value imputation!')
     Xmat
   }
 }
@@ -65,6 +65,7 @@ na_fill_rpart <- function(Xmat,
   }
 
   # anyNA(Xmat_2) # FALSE
+  # LuckyVerbose('Done!')
   return(t(Xmat_2))
   # ?rpart::rpart
   # ?base::anyNA
@@ -85,7 +86,7 @@ na_fill_quantile <- function(Xmat,
 
   if(sum(na.pos) == 0){
 
-    if(verbose) LuckyVerbose('Without missing value. Ignored.')
+    LuckyVerbose('Without missing value. Ignored.')
 
   } else {
 
