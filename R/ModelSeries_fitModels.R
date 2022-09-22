@@ -80,26 +80,37 @@ na_fill_quantile <- function(Xmat,
     Xmat <- testData$PanSTAD_expr_part
   }
 
+  # Missing value
   na.pos <- apply(Xmat,2,is.one.na)
-  set.seed(seed); seeds <- sample(1:ncol(Xmat)*10, sum(na.pos), replace = F)
-  tSample <- names(na.pos)[na.pos]
-  quantile_vector <- (1:1000)/1000
 
-  for(i in 1:length(tSample)){ # i=1
+  if(sum(na.pos) == 0){
 
-    sample.i <- tSample[i]
-    expr.i <- Xmat[, sample.i]
-    expr.i.max <- max(expr.i, na.rm = T)
-    expr.i.min <- min(expr.i, na.rm = T)
-    set.seed(seeds[i]);
-    expr.i[is.na(expr.i)] <-
-      expr.i.min +
-      (expr.i.max-expr.i.min) * sample(quantile_vector,
-                                       sum(is.na(expr.i)),
-                                       replace = T)
-    Xmat[, sample.i] <- expr.i
+    if(verbose) LuckyVerbose('Without missing value. Ignored.')
+
+  } else {
+
+    set.seed(seed); seeds <- sample(1:ncol(Xmat)*10, sum(na.pos), replace = F)
+    tSample <- names(na.pos)[na.pos]
+    quantile_vector <- (1:1000)/1000
+
+    for(i in 1:length(tSample)){ # i=1
+
+      sample.i <- tSample[i]
+      expr.i <- Xmat[, sample.i]
+      expr.i.max <- max(expr.i, na.rm = T)
+      expr.i.min <- min(expr.i, na.rm = T)
+      set.seed(seeds[i]);
+      expr.i[is.na(expr.i)] <-
+        expr.i.min +
+        (expr.i.max-expr.i.min) * sample(quantile_vector,
+                                         sum(is.na(expr.i)),
+                                         replace = T)
+      Xmat[, sample.i] <- expr.i
+    }
+
   }
 
+  # Output
   return(Xmat)
 
 }

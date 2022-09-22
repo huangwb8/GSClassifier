@@ -61,7 +61,8 @@
 PADi <- function(X,
                  geneid = "ensembl",
                  cancer.type = 'GC',
-                 version = '20200110',
+                 version = c('20200110',
+                             '20220916')[1],
                  numCores = 0,
                  verbose = T){
 
@@ -72,7 +73,9 @@ PADi <- function(X,
   }
 
 
-  pass <- (cancer.type == 'GC' & version == '20200110')
+  pass <- (cancer.type == 'GC')
+
+  subtype <- paste0("PAD.train_", version)
 
   if(pass & numCores == 0){
 
@@ -84,7 +87,8 @@ PADi <- function(X,
       geneSet = NULL,
       scaller = NULL,
       geneid = geneid,
-      subtype = "PAD.train_20200110",
+      # subtype = "PAD.train_20200110",
+      subtype = subtype,
       verbose = verbose
     )
 
@@ -98,19 +102,14 @@ PADi <- function(X,
       geneSet = NULL,
       scaller = NULL,
       geneids='ensembl',
-      subtype = "PAD.train_20200110",
+      subtype = subtype,
       verbose = verbose,
       numCores = numCores)
 
   } else{
 
-    LuckyVerbose("Incorrect 'cancer.type' or 'version'. Only cancer.type = 'GC' and version = '20200110' are available in the current software.")
+    LuckyVerbose("Incorrect 'cancer.type' or 'version'. Only cancer.type = 'GC' is available in the current software.")
 
   }
 
 }
-
-
-
-
-

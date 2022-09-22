@@ -8,7 +8,7 @@ PADi(
   X,
   geneid = "ensembl",
   cancer.type = "GC",
-  version = "20200110",
+  version = c("20200110", "20220916")[1],
   numCores = 0,
   verbose = T
 )
