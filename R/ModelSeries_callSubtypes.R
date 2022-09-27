@@ -196,8 +196,11 @@ callSubtypes <- function(mods, X, geneSet, nClust=4, verbose=T) {
   pList <- lapply(1:nClust, function(mi) callOneSubtype(mods, X, mi, geneSet, nClust, verbose))
   pMat  <- do.call('cbind', pList)
   colnames(pMat) <- 1:nClust # names(mods)
-  bestCall <- apply(pMat, 1, function(pi) colnames(pMat)[which(pi == max(pi)[1])])
-
+  bestCall <- apply(pMat, 1, function(pi) colnames(pMat)[which(pi == max(pi))][1])
+  # 2022-9-27. There's no problem because bestcall_max is a legacy category strategy and would not be recommended.
+  # bestCall <- apply(pMat, 1, function(pi) colnames(pMat)[which(pi == max(pi)[1])])
+  #     1           2           3           4
+  # 0.077546641 0.004749997 0.832491577 0.832491577
   return(data.frame(SampleID=colnames(X), BestCall=bestCall, pMat, stringsAsFactors=F))
 }
 

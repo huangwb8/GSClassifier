@@ -217,8 +217,9 @@ callEnsemble_Multi <- function(X,
 
   ## Call subtypes
   eList <-
-    lapply(ens, function(ei)
-      callSubtypes(mods = ei, X = X, geneSet, nClust, verbose))
+    lapply(ens, function(ei){
+      callSubtypes(mods = ei, X = X, geneSet, nClust, verbose)
+    })
   ePart <- lapply(eList, function(a)
     a[, 3:(2 + nClust)])
   eStack <- array(unlist(ePart) , c(ncol(X), nClust, length(ens)))

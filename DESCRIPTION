@@ -1,7 +1,7 @@
 Package: GSClassifier
 Type: Package
 Title: Gene Signature Classifier
-Version: 0.1.24
+Version: 0.1.25
 Authors@R:
     person(given = "Weibin",
            family = "Huang",
