@@ -319,6 +319,48 @@ trainDataProc <- function(Xmat, Yvec,
 }
 
 
+#' @description Binary data preprocessing based on expression matrix
+#' @inheritParams trainDataProc
+#' @return List of Xbin and Ybin, the binned, subset, and binarized values.
+trainDataProc_X <- function(Xmat,
+                            geneSet,
+                            breakVec=c(0, 0.25, 0.5, 0.75, 1.0)) {
+
+  # bin the expression data
+  Xbinned <- apply(Xmat, 2, GSClassifier:::breakBin, breakVec) # bin each column
+  rownames(Xbinned) <- rownames(Xmat)
+
+  # rank the data, and use it for feature selection
+  # Xrank <- apply(Xmat, 2, rank)
+  # testRes <- sapply(1:nrow(Xrank), function(gi) testFun(as.numeric(Xrank[gi,]), Ybin))  # get genes with big rank diffs.
+
+  # subset the expression data for pairs
+  # Xfeat <- featureSelection(Xmat, Ybin, testRes, ptail)  # subset genes
+  Xpairs <- GSClassifier:::makeGenePairs(rownames(Xmat), Xmat)
+
+  # subset the binned genes
+  # Xbinned <- Xbinned[Xfeat$Genes,]
+
+  # gene set features.
+  nGS <- length(geneSet) # Optimized for single signature
+  if(nGS == 1){
+    # Without gene sets interaction
+    Xset <- NULL
+  } else {
+    # With gene sets interaction
+    Xset <- GSClassifier:::makeSetData(Xmat,geneSet) #--bug--
+  }
+
+  # join the data types and transpose
+  Xbin <- t(rbind(Xbinned, Xpairs, Xset))
+  genes <- colnames(Xbin)
+
+  return(list(dat=list(Xbin=Xbin,
+                       Genes=genes),
+              breakVec=breakVec))
+}
+
+
 #' @description Train a single subtype model using cross validation
 #' @param Xbin Binned and filtered gene expression matrix.
 #' @param Ybin Binned phenotype vector.
