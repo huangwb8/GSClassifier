@@ -25,7 +25,7 @@ Please go to [eBook](https://huangwb8.github.io/GSClassifier.principle/) for ste
 
 ## :alien: Authors
 
-Weibin Huang (黄伟斌);  <hwb2012@qq.com>;  <a href="https://github.com/huangwb8/test_file/blob/master/GSClassifier/pay.jpg?raw=true"><img src="https://img.shields.io/badge/say-thanks-ff69b4.svg"></a>
+Weibin Huang (黄伟斌);  <hwb2012@qq.com>;  <a href="https://blognas.hwb0307.com/ad"><img src="https://img.shields.io/badge/say-thanks-ff69b4.svg"></a>
 
 1. Department of Gastrointestinal Surgery, The First Affiliated Hospital of Sun Yat-sen University, 58 Zhongshan 2nd Road, Guangzhou 510080, Guangdong, China.
 
