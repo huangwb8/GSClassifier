@@ -27,9 +27,9 @@ Please go to [eBook](https://huangwb8.github.io/GSClassifier.principle/) for ste
 
 Weibin Huang (黄伟斌);  <hwb2012@qq.com>;  <a href="https://blognas.hwb0307.com/thankyou"><img src="https://img.shields.io/badge/say-thanks-ff69b4.svg"></a>
 
-1. Department of Gastrointestinal Surgery, The First Affiliated Hospital of Sun Yat-sen University, 58 Zhongshan 2nd Road, Guangzhou 510080, Guangdong, China.
++ Department of Gastrointestinal Surgery, The First Affiliated Hospital of Sun Yat-sen University, 58 Zhongshan 2nd Road, Guangzhou 510080, Guangdong, China.
 
-2. Guangdong Provincial Key Laboratory of Digestive Cancer Research, The Seventh Affiliated Hospital of Sun Yat-sen University, No. 628 Zhenyuan Road, Shenzhen, 518107, Guangdong, China.
++ Guangdong Provincial Key Laboratory of Digestive Cancer Research, The Seventh Affiliated Hospital of Sun Yat-sen University, No. 628 Zhenyuan Road, Shenzhen, 518107, Guangdong, China.
 
 ## :+1: Our papers
 
