@@ -33,7 +33,18 @@ Weibin Huang (黄伟斌);  <hwb2012@qq.com>;  <a href="https://blognas.hwb0307.c
 
 ## :+1: Our papers
 
-+ **W. Huang**†, Y. Zhang†, S. Chen†, H. Yin, G. Liu, H. Zhang, J. Xu, J. Yu, Y. Xia, Y. He\*, and C. Zhang\*. Personalized immune subtypes based on machine learning predict response to checkpoint blockade in gastric cancer. **Breifings in Bioinformatics**, 2022. [https://doi.org/10.1093/bib/bbac554](https://doi.org/10.1093/bib/bbac554)
+@article{weibin2022,
+   author = {Huang, W. and Zhang, Y. and Chen, S. and Yin, H. and Liu, G. and Zhang, H. and Xu, J. and Yu, J. and Xia, Y. and He, Y. and Zhang, C.},
+   title = {Personalized immune subtypes based on machine learning predict response to checkpoint blockade in gastric cancer},
+   journal = {Brief Bioinform},
+   ISSN = {1477-4054 (Electronic)
+1467-5463 (Linking)},
+   DOI = {[10.1093/bib/bbac554](https://doi.org/10.1093/bib/bbac554)},
+   url = {[https://www.ncbi.nlm.nih.gov/pubmed/36572651](https://www.ncbi.nlm.nih.gov/pubmed/36572651)},
+   year = {2022},
+   type = {Journal Article}
+}
+
 
 ## :cd: License
 
