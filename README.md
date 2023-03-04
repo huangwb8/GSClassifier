@@ -11,6 +11,7 @@
 <a href=""><img src="https://img.shields.io/github/commit-activity/m/huangwb8/GSClassifier"></a>
 <a href=""><img src="https://img.shields.io/github/stars/huangwb8/GSClassifier?style=social"></a>
 <a href="https://github.com/huangwb8/GSClassifier/issues"><img src="https://img.shields.io/github/issues-raw/huangwb8/GSClassifier"></a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fhuangwb8%2FGSClassifier?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhuangwb8%2FGSClassifier.svg?type=shield"/></a>
 </p>
 
 ### A comprehensive and expandable classification tool  based on pure transcriptomics for precision medicine
@@ -55,6 +56,9 @@ Weibin Huang (黄伟斌);  <hwb2012@qq.com>;  <a href="https://blognas.hwb0307.c
 ## :cd: License
 
 **GSClassifier** is released under the Apache-2.0 license. See [LICENSE](https://github.com/huangwb8/GSClassifier/blob/master/license.txt) for details.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhuangwb8%2FGSClassifier.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhuangwb8%2FGSClassifier?ref=badge_large)
 
 ## :star: Reference
 
