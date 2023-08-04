@@ -38,6 +38,7 @@
 #'   geneSet = NULL,
 #'   scaller = NULL,
 #'   geneid = "ensembl",
+#'   matchmode = 'fix',
 #'   subtype = "PAD.train_20200110",
 #'   verbose = F
 #' )
@@ -53,6 +54,7 @@
 #' #   geneSet = NULL,
 #' #   scaller = NULL,
 #' #   geneids = 'ensembl',
+#' #   matchmode = 'fix',
 #' #   subtype = 'PAD.train_20200110',
 #' #   verbose = T,
 #' #   numCores = 2)
@@ -60,6 +62,7 @@
 #' @export
 PADi <- function(X,
                  geneid = "ensembl",
+                 matchmode = c('fix', 'free')[1],
                  cancer.type = 'GC',
                  version = c('20200110',
                              '20220916')[1],
@@ -87,6 +90,7 @@ PADi <- function(X,
       geneSet = NULL,
       scaller = NULL,
       geneid = geneid,
+      matchmode = matchmode,
       # subtype = "PAD.train_20200110",
       subtype = subtype,
       verbose = verbose
@@ -101,7 +105,8 @@ PADi <- function(X,
       geneAnnotation = NULL,
       geneSet = NULL,
       scaller = NULL,
-      geneids='ensembl',
+      geneids = geneid,
+      matchmode = matchmode,
       subtype = subtype,
       verbose = verbose,
       numCores = numCores)

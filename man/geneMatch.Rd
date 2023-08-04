@@ -4,7 +4,12 @@
 \alias{geneMatch}
 \title{geneMatch}
 \usage{
-geneMatch(X, geneAnnotation = NULL, geneid = "ensembl")
+geneMatch(
+  X,
+  geneAnnotation = NULL,
+  geneid = "ensembl",
+  matchmode = c("fix", "free")[1]
+)
 }
 \arguments{
 \item{X}{gene expression matrix, genes in rows, samples in columns}
@@ -12,6 +17,8 @@ geneMatch(X, geneAnnotation = NULL, geneid = "ensembl")
 \item{geneAnnotation}{A data frame with ENSEMBL, SYMBOL and ENTREZID of the genes in \code{geneSet}}
 
 \item{geneid}{type of gene id in \code{X}. One of \code{'symbol'}, \code{'entrez'} and \code{'ensembl'}.}
+
+\item{matchmode}{If your genes belong to ENSEMBL, SYMBOL or ENTREZ, you should set \code{matchmode = 'fix'}, in which all genes would be aligned to ENSEMBL. \code{'matchmode = free'} is a legacy feature, which means that you have to convert your genes into the same annotation type of the pre-trained \code{GSClassifier} model.}
 }
 \value{
 Matched index of genes to the expression matrix.

@@ -7,6 +7,7 @@
 PADi(
   X,
   geneid = "ensembl",
+  matchmode = c("fix", "free")[1],
   cancer.type = "GC",
   version = c("20200110", "20220916")[1],
   numCores = 0,
@@ -15,6 +16,8 @@ PADi(
 }
 \arguments{
 \item{X}{a numeric RNA expression vector or matrix with gene names}
+
+\item{matchmode}{If your genes belong to ENSEMBL, SYMBOL or ENTREZ, you should set \code{matchmode = 'fix'}, in which all genes would be aligned to ENSEMBL. \code{'matchmode = free'} is a legacy feature, which means that you have to convert your genes into the same annotation type of the pre-trained \code{GSClassifier} model.}
 
 \item{cancer.type}{The type of cancer}
 
@@ -61,6 +64,7 @@ res_padi <- callEnsemble(
   geneSet = NULL,
   scaller = NULL,
   geneid = "ensembl",
+  matchmode = 'fix',
   subtype = "PAD.train_20200110",
   verbose = F
 )
@@ -76,6 +80,7 @@ res_padi <- PADi(X = X, verbose = F)
 #   geneSet = NULL,
 #   scaller = NULL,
 #   geneids = 'ensembl',
+#   matchmode = 'fix',
 #   subtype = 'PAD.train_20200110',
 #   verbose = T,
 #   numCores = 2)

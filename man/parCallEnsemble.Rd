@@ -11,6 +11,7 @@ parCallEnsemble(
   geneSet = NULL,
   scaller = NULL,
   geneids = "ensembl",
+  matchmode = c("fix", "free")[1],
   subtype = c("PAD.train_20200110", "ImmuneSubtype")[1],
   verbose = T,
   numCores = 2
@@ -26,6 +27,8 @@ parCallEnsemble(
 \item{geneSet}{A list of genes for classification}
 
 \item{scaller}{scaller object. A \code{\link[xgboost]{xgb.train}} object.}
+
+\item{matchmode}{If your genes belong to ENSEMBL, SYMBOL or ENTREZ, you should set \code{matchmode = 'fix'}, in which all genes would be aligned to ENSEMBL. \code{'matchmode = free'} is a legacy feature, which means that you have to convert your genes into the same annotation type of the pre-trained \code{GSClassifier} model.}
 
 \item{subtype}{Default subtype methods. Now, only \code{'PAD'} and
 \code{'ImmuneSubtype'} are available. ATTENTION: If you use self-defined
@@ -45,5 +48,6 @@ table, column 1 is best call, remaining columns are subtype
 Parallel version of callEnsemble
 }
 \details{
-Data of one sample was not supported. Please use \code{\link{callEnsemble}} instead.
+1. Data of one sample was not supported. Please use \code{\link{callEnsemble}} instead. \cr
+2. The sample of \code{X} must be over 10!
 }

@@ -35,6 +35,7 @@ callEnsemble <- function(X,
                          geneSet = NULL,
                          scaller = NULL,
                          geneid = 'ensembl',
+                         matchmode = c('fix', 'free')[1],
                          subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                          verbose = T) {
 
@@ -64,6 +65,7 @@ callEnsemble <- function(X,
       geneSet = geneSet,
       scaller = scaller,
       geneid = geneid,
+      matchmode = matchmode,
       subtype = subtype,
       verbose = verbose
     )
@@ -76,6 +78,7 @@ callEnsemble <- function(X,
       geneSet = geneSet,
       scaller = scaller,
       geneid = geneid,
+      matchmode = matchmode,
       subtype = subtype,
       verbose = verbose
     )
@@ -96,6 +99,7 @@ callEnsemble_One <- function(X,
                              geneSet = NULL,
                              scaller = NULL,
                              geneid = 'ensembl',
+                             matchmode = c('fix', 'free')[1],
                              subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                              verbose = T) {
   ## Test
@@ -133,10 +137,9 @@ callEnsemble_One <- function(X,
   }
 
   ## Matched data
-  res0 <- geneMatch(X, geneAnnotation, geneid)
+  res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X2 <- data.frame(target = res0$Subset, target2 = res0$Subset)
-  matchError <- res0$matchError
-  reportError(matchError)
+  reportError(res0)
 
   ## Call subtypes
   eList <-
@@ -187,6 +190,7 @@ callEnsemble_Multi <- function(X,
                                geneSet = NULL,
                                scaller = NULL,
                                geneid = 'ensembl',
+                               matchmode = c('fix', 'free')[1],
                                subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                                verbose = T) {
   ## Load classifier data
@@ -210,10 +214,9 @@ callEnsemble_Multi <- function(X,
   }
 
   ## Matched data
-  res0 <- geneMatch(X, geneAnnotation, geneid)
+  res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X <- res0$Subset
-  matchError <- res0$matchError
-  reportError(matchError)
+  reportError(res0)
 
   ## Call subtypes
   eList <-
@@ -260,7 +263,8 @@ callEnsemble_Multi <- function(X,
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom doParallel registerDoParallel stopImplicitCluster
 #' @import foreach xgboost
-#' @details Data of one sample was not supported. Please use \code{\link{callEnsemble}} instead.
+#' @details 1. Data of one sample was not supported. Please use \code{\link{callEnsemble}} instead. \cr
+#' 2. The sample of \code{X} must be over 10!
 #' @return table, column 1 is best call, remaining columns are subtype
 #'   prediction scores.
 #' @export
@@ -270,6 +274,7 @@ parCallEnsemble <- function(X,
                             geneSet = NULL,
                             scaller = NULL,
                             geneids = 'ensembl',
+                            matchmode = c('fix', 'free')[1],
                             subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                             verbose = T,
                             numCores = 2) {
@@ -308,10 +313,9 @@ parCallEnsemble <- function(X,
   }
 
   ## Matched data and splited
-  res0 <- geneMatch(X, geneAnnotation, geneids)
+  res0 <- geneMatch(X, geneAnnotation, geneids, matchmode)
   X <- res0$Subset
-  matchError <- res0$matchError
-  reportError(matchError)
+  reportError(res0)
   XL <- spliteMatrix(X, cutoff = 10)
 
   ## Parallel call subtypes
