@@ -25,7 +25,13 @@ Please go to [eBook](https://huangwb8.github.io/GSClassifier.principle/) for ste
 
 ## :alien: Authors
 
-Weibin Huang (黄伟斌);  <hwb2012@qq.com>;  <a href="https://blognas.hwb0307.com/thankyou"><img src="https://img.shields.io/badge/say-thanks-ff69b4.svg"></a>
+Weibin Huang (黄伟斌);  <hwb2012@qq.com>; [Blog](https://blognas.hwb0307.com/); <a href="https://blognas.hwb0307.com/thankyou"><img src="https://img.shields.io/badge/say-thanks-ff69b4.svg"></a>
+
+**Current position**:
+
++ Department of Gastrointestinal Surgery, Zhujiang Hospital, Southern Medical University, 253 Industrial Avenue Central, Guangzhou, Guangdong, China
+
+**Legacy position**:
 
 + Department of Gastrointestinal Surgery, The First Affiliated Hospital of Sun Yat-sen University, 58 Zhongshan 2nd Road, Guangzhou 510080, Guangdong, China.
 
