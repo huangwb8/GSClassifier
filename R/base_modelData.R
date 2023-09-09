@@ -29,7 +29,7 @@ modelData <- function(design,
   #            plyr::summarize,
   #            Size = 1) # length(platform)
   l <- dlply(design,.variables = variable)
-  set.seed(2020); seeds <- sample(1:10000, length(l),replace = F)
+  set.seed(seed); seeds <- sample(1:10000, length(l),replace = F)
 
   ## Subtset function
   getOneData <- function(x,Prop = 0.6,seed.i=seeds[1]){
