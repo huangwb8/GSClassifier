@@ -62,10 +62,12 @@ modelData <- function(design,
     L[[names(l)[i]]] <- getOneData(x.i,Prop = Prop,seed.i=seeds[i])
   }
   train <- do.call('rbind',L)
-  rownames(train) <- as.character(train[,id.col])
+  # rownames(train) <- as.character(train[,id.col])
 
   ## Validation dataset
-  valid <- design[setdiff(rownames(design),rownames(train)),]
+  train_index <- match(as.character(train[,id.col]), as.character(design[,id.col]))
+  train <- design[train_index,]
+  valid <- design[setdiff(1:nrow(design),train_index),]
 
   ## Output
   res <- list(
