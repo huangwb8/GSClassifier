@@ -10,7 +10,7 @@ parCallEnsemble(
   geneAnnotation = NULL,
   geneSet = NULL,
   scaller = NULL,
-  geneids = "ensembl",
+  geneid = "ensembl",
   matchmode = c("fix", "free")[1],
   subtype = c("PAD.train_20200110", "ImmuneSubtype")[1],
   verbose = T,
@@ -27,6 +27,8 @@ parCallEnsemble(
 \item{geneSet}{A list of genes for classification}
 
 \item{scaller}{scaller object. A \code{\link[xgboost]{xgb.train}} object.}
+
+\item{geneid}{type of gene id in \code{X}. One of \code{'symbol'}, \code{'entrez'} and \code{'ensembl'}.}
 
 \item{matchmode}{If your genes belong to ENSEMBL, SYMBOL or ENTREZ, you should set \code{matchmode = 'fix'}, in which all genes would be aligned to ENSEMBL. \code{'matchmode = free'} is a legacy feature, which means that you have to convert your genes into the same annotation type of the pre-trained \code{GSClassifier} model.}
 

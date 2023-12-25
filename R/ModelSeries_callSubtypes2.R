@@ -22,7 +22,7 @@
 #' ens = NULL,
 #' geneAnnotation = NULL,
 #' geneSet = NULL,
-#' geneids = "symbol",
+#' geneid = "symbol",
 #' nClust = 6,
 #' subtype = 'ImmuneSubtype',
 #' bestMethod = c("maximum", "scaller")[2],
@@ -121,7 +121,7 @@ callEnsemble_One <- function(X,
 
     # Use system data
 
-    LuckyVerbose('Use ', subtype, ' classifier...')
+    if(verbose) LuckyVerbose('Use ', subtype, ' classifier...')
     l <-
       readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
     scaller <- l$scaller$Model
@@ -132,14 +132,14 @@ callEnsemble_One <- function(X,
 
   } else {
     # Use self-defined data
-    LuckyVerbose('Use self-defined classifier...')
+    if(verbose) LuckyVerbose('Use self-defined classifier...')
     nClust = length(ens[[1]])
   }
 
   ## Matched data
   res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X2 <- data.frame(target = res0$Subset, target2 = res0$Subset)
-  reportError(res0)
+  if(verbose) reportError(res0)
 
   ## Call subtypes
   eList <-
@@ -174,7 +174,7 @@ callEnsemble_One <- function(X,
     eMeds
   )
   colnames(res0)[4:(3 + nClust)] <- 1:nClust
-  LuckyVerbose('All done!')
+  if(verbose) LuckyVerbose('All done!')
   return(res0[1, ])
 }
 
@@ -198,7 +198,7 @@ callEnsemble_Multi <- function(X,
 
     # Use system data
 
-    LuckyVerbose('Use ', subtype, ' classifier...')
+    if(verbose) LuckyVerbose('Use ', subtype, ' classifier...')
     l <-
       readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
     scaller <- l$scaller$Model
@@ -209,14 +209,14 @@ callEnsemble_Multi <- function(X,
 
   } else {
     # Use self-defined data
-    LuckyVerbose('Use self-defined classifier...')
+    if(verbose) LuckyVerbose('Use self-defined classifier...')
     nClust = length(ens[[1]])
   }
 
   ## Matched data
   res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X <- res0$Subset
-  reportError(res0)
+  if(verbose) reportError(res0)
 
   ## Call subtypes
   eList <-
@@ -251,7 +251,7 @@ callEnsemble_Multi <- function(X,
     eMeds
   )
   colnames(res0)[4:(3 + nClust)] <- 1:nClust
-  LuckyVerbose('All done!')
+  if(verbose) LuckyVerbose('All done!')
   return(res0)
 }
 
@@ -273,7 +273,7 @@ parCallEnsemble <- function(X,
                             geneAnnotation = NULL,
                             geneSet = NULL,
                             scaller = NULL,
-                            geneids = 'ensembl',
+                            geneid = 'ensembl',
                             matchmode = c('fix', 'free')[1],
                             subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                             verbose = T,
@@ -313,7 +313,7 @@ parCallEnsemble <- function(X,
   }
 
   ## Matched data and splited
-  res0 <- geneMatch(X, geneAnnotation, geneids, matchmode)
+  res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X <- res0$Subset
   reportError(res0)
   XL <- spliteMatrix(X, cutoff = 10)
@@ -334,7 +334,9 @@ parCallEnsemble <- function(X,
 
     # Parallel
     cl <- makeCluster(numCores)
-    registerDoParallel(cl)
+    suppressMessages(
+      registerDoParallel(cl)
+    )
     clusterExport(cl, c('ens', 'XL', 'geneSet', 'nClust', 'verbose'), envir =
                     environment())
     clusterExport(

@@ -17,6 +17,8 @@ PADi(
 \arguments{
 \item{X}{a numeric RNA expression vector or matrix with gene names}
 
+\item{geneid}{type of gene id in \code{X}. One of \code{'symbol'}, \code{'entrez'} and \code{'ensembl'}.}
+
 \item{matchmode}{If your genes belong to ENSEMBL, SYMBOL or ENTREZ, you should set \code{matchmode = 'fix'}, in which all genes would be aligned to ENSEMBL. \code{'matchmode = free'} is a legacy feature, which means that you have to convert your genes into the same annotation type of the pre-trained \code{GSClassifier} model.}
 
 \item{cancer.type}{The type of cancer}

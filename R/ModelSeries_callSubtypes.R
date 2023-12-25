@@ -172,7 +172,7 @@ dataProc <- function(X,
 callOneSubtype <- function(mods, X, ci, geneSet, nClust, verbose=T) {
 
   # Xbin needs to have the same columns as the training matrix...
-  if(verbose) LuckyVerbose(paste0('calling subtype ', ci))
+  # if(verbose) (paste0('calling subtype ', ci))
   mi <- mods[[ci]]
   Xbin <- dataProc(X, mods=mi, geneSet, nClust)
 

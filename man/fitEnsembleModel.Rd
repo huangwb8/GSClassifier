@@ -14,8 +14,12 @@ fitEnsembleModel(
   sampSize = 0.7,
   sampSeed = 2020,
   breakVec = c(0, 0.25, 0.5, 0.75, 1),
-  params = list(max_depth = 5, eta = 0.5, nrounds = 100, nthread = 5, nfold = 5),
-  caret.grid = NULL,
+  params = list(nrounds = 15, max_depth = 10, eta = 0.5, nthread = 5, colsample_bytree =
+    1, min_child_weight = 1),
+  xgboost.seed = 105,
+  caret.grid = expand.grid(nrounds = c(10, 15), max_depth = c(5, 10), eta = c(0.01, 0.1,
+    0.3), gamma = c(0.5, 0.3), colsample_bytree = 1, min_child_weight = 1, subsample =
+    0.7),
   caret.seed = 101,
   ptail = 0.5,
   verbose = F,
@@ -44,13 +48,13 @@ fitSubtypeModel}
 
 \item{params}{The parameters for \code{\link[xgboost]{xgb.train}}}
 
+\item{xgboost.seed}{Seed for xgboost.}
+
 \item{caret.seed}{The random seed for caret::train process when \code{params} is \code{NULL}}
 
 \item{ptail}{Binary phenotype vector.}
 
 \item{verbose}{whether report modeling process}
-
-\item{numCores}{number of cores to use, one per ensemble member}
 }
 \value{
 A list of lists of xgboost classifiers

@@ -93,7 +93,7 @@ geneMatch_fixed <- function(X,
   return(list(Subset=X2, matchError=matchError, missGenes = missGenes))
 }
 
-#' @description fix mode of \code{geneMatch}
+#' @description free mode of \code{geneMatch}
 geneMatch_free<- function(X,
                       geneAnnotation = NULL,
                       geneid='ensembl') {

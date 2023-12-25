@@ -7,6 +7,7 @@
 #' @param caret.seed The random seed for caret::train process when \code{params} is \code{NULL}
 #' @param na.fill.method Missing value imputation method for \code{\link{na_fill}} function. One of \code{'quantile'}, \code{'rpart'} and \code{NULL}.
 #' @param na.fill.seed Seed for \code{\link{na_fill}} function.
+#' @param xgboost.seed Seed for xgboost.
 #' @inheritParams cvFitOneModel
 #' @inheritParams trainDataProc
 #' @return A list of xgboost classifiers, one for each subtype.
@@ -25,23 +26,35 @@ fitSubtypeModel <- function(Xs,
                             na.fill.seed=2022,
                             breakVec = c(0, 0.25, 0.5, 0.75, 1.0),
                             params = list(
-                              max_depth = 2,
+                              nrounds = 15,
+                              max_depth = 10,
                               eta = 0.5,
-                              nrounds = 100,
                               nthread = 5,
-                              nfold = 5
+                              colsample_bytree = 1,
+                              min_child_weight = 1
                             ),
-                            caret.grid = NULL,
+                            xgboost.seed = 105,
+                            caret.grid = expand.grid(
+                              nrounds = c(10,15),
+                              max_depth = c(5,10),
+                              eta = c(0.01, 0.1, 0.3),
+                              gamma = c(0.5, 0.3),
+                              colsample_bytree = 1,
+                              min_child_weight = 1,
+                              subsample = 0.7
+                            ),
                             caret.seed = 101,
                             ptail = 0.05,
+                            numCores = 2,
                             verbose = F) {
   modelList <- list()
   allLabels <- unique(Ys)
 
   # Set seeds
   set.seed(caret.seed)
-  caret.seeds <-
-    sample(1:100000, size = length(unique(Ys)), replace = F)
+  caret.seeds <- sample(1:100000, size = length(allLabels), replace = F)
+  set.seed(xgboost.seed)
+  xgboost.seeds <- sample(1:100000, size = length(allLabels), replace = F)
 
   # Missing value imputation
   Xs <- na_fill(Xs,
@@ -74,10 +87,15 @@ fitSubtypeModel <- function(Xs,
       ))
 
     if (!is.null(params)) {
-      # Best iteration based on one available model
-      csfr <-
-        cvFitOneModel(dat$Xbin, dat$Ybin, params, breakVec, dat$Genes, verbose =
-                        verbose)
+      csfr <- cvFitOneModel(
+        Xbin = dat$Xbin,
+        Ybin = dat$Ybin,
+        params = params,
+        breakVec = breakVec,
+        genes = dat$Genes,
+        seed = xgboost.seeds[i],
+        verbose = verbose
+        )
     } else {
       # The caret::train strategy for params selection. Time consuming
       csfr <-
@@ -88,7 +106,8 @@ fitSubtypeModel <- function(Xs,
           dat$Genes,
           seed = caret.seeds[i],
           caret.grid = caret.grid,
-          verbose = verbose
+          verbose = verbose,
+          numCores = numCores
         )
     }
 
@@ -99,6 +118,7 @@ fitSubtypeModel <- function(Xs,
   return(modelList)
 }
 
+
 #' @title fitEnsembleModel
 #' @description Train multiple subtype models using cross validation
 #' @inheritParams fitSubtypeModel
@@ -106,11 +126,9 @@ fitSubtypeModel <- function(Xs,
 #'   fitSubtypeModel
 #' @param sampSize proportion of samples to hold back
 #' @param sampSeed random seed for subset of Xs
-#' @param numCores number of cores to use, one per ensemble member
 #' @importFrom parallel makeCluster clusterExport stopCluster parLapply
 #' @details The geneid of \code{geneSet} and \code{Xs} must be the same (one of
 #'   ENSEMBL, SYMBOL or ENTREZID). In addition, if \code{fitEnsembleModel} is hanged on, please check the space use of \code{/}, which would disturb the work of \code{\link[parallel]{makeCluster}}.
-
 #' @return A list of lists of xgboost classifiers
 #' @export
 fitEnsembleModel <- function(Xs,
@@ -123,13 +141,23 @@ fitEnsembleModel <- function(Xs,
                              sampSeed = 2020,
                              breakVec = c(0, 0.25, 0.5, 0.75, 1.0),
                              params = list(
-                               max_depth = 5,
+                               nrounds = 15,
+                               max_depth = 10,
                                eta = 0.5,
-                               nrounds = 100,
                                nthread = 5,
-                               nfold = 5
+                               colsample_bytree = 1,
+                               min_child_weight = 1
                              ),
-                             caret.grid = NULL,
+                             xgboost.seed = 105,
+                             caret.grid = expand.grid(
+                               nrounds = c(10,15),
+                               max_depth = c(5,10),
+                               eta = c(0.01, 0.1, 0.3),
+                               gamma = c(0.5, 0.3),
+                               colsample_bytree = 1,
+                               min_child_weight = 1,
+                               subsample = 0.7
+                             ),
                              caret.seed = 101,
                              ptail = 0.5,
                              verbose = F,
@@ -147,11 +175,13 @@ fitEnsembleModel <- function(Xs,
 
   # Parallel Cores # https://stackoverflow.com/questions/21773199/r-makecluster-hangs-on-localhost-in-linux
   if (verbose) LuckyVerbose('Start parallel process...')
-  cl <- makeCluster(numCores,  outfile = '')
+  cl <- makeCluster(numCores)
 
   # Seeds
   set.seed(sampSeed)
   seeds <- sample(1:100000, size = n, replace = F)
+  set.seed(xgboost.seed)
+  xgboost.seeds <- sample(1:100000, size = n, replace = F)
 
   # Assistant function
   fitFun <- function(i, verbose) {
@@ -169,10 +199,12 @@ fitEnsembleModel <- function(Xs,
       na.fill.seed = na.fill.seed,
       breakVec = breakVec,
       params = params,
+      xgboost.seed = xgboost.seeds[i],
       caret.grid = caret.grid,
       caret.seed = caret.seed,
       ptail = ptail,
-      verbose = verbose
+      verbose = verbose,
+      numCores = numCores
     )
     return(modi)
   }
@@ -188,9 +220,11 @@ fitEnsembleModel <- function(Xs,
   clusterExport(cl, 'caret.seed',  envir = environment())
   clusterExport(cl, 'breakVec',  envir = environment())
   clusterExport(cl, 'params',  envir = environment())
+  clusterExport(cl, 'xgboost.seeds',  envir = environment())
   clusterExport(cl, 'ptail',  envir = environment())
   clusterExport(cl, 'verbose',  envir = environment())
   clusterExport(cl, 'caret.grid',  envir = environment())
+  clusterExport(cl, 'numCores',  envir = environment())
   clusterExport(
     cl,
     c(
