@@ -176,7 +176,7 @@ callOneSubtype <- function(mods, X, ci, geneSet, nClust, verbose=T) {
 
   # if(verbose) (paste0('calling subtype ', ci))
 
-  if(as.character(ci) %in% names(mod)){
+  if(as.character(ci) %in% names(mods)){
 
     mi <- mods[[as.character(ci)]] # or we can use: mi <- mods[[ci]]
     Xbin <- dataProc(X, mods=mi, geneSet, nClust)
