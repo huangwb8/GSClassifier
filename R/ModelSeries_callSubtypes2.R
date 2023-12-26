@@ -53,7 +53,7 @@ callEnsemble <- function(X,
   }
 
   # Return a rignt format data
-  X <- rightX(X)
+  X <- GSClassifier:::rightX(X)
 
   # Subtype callings
   if (is.vector(X)) {
@@ -216,7 +216,7 @@ callEnsemble_Multi <- function(X,
   ## Matched data
   res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X <- res0$Subset
-  if(verbose) reportError(res0)
+  if(verbose) GSClassifier:::reportError(res0)
 
   ## Call subtypes
   eList <-
