@@ -46,7 +46,7 @@ fitSubtypeModel}
 
 \item{breakVec}{vector of break points, used to bin expression data}
 
-\item{params}{The parameters for \code{\link[xgboost]{xgb.train}}}
+\item{params}{The parameters for \code{\link[xgboost]{xgb.train}}. 1. xgb.cv only: nfold; 2. xgboost: nrounds, max_depth, eta, nthread, colsample_bytree, min_child_weight.}
 
 \item{xgboost.seed}{Seed for xgboost.}
 

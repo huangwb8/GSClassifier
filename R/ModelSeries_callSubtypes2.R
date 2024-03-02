@@ -155,7 +155,7 @@ callEnsemble_One <- function(X,
   ## Best call of maximum strategy
   bestCall_max <-
     apply(eMeds, 1, function(pi)
-      colnames(eMeds)[which(pi == max(pi)[1])])
+      colnames(eMeds)[which(pi == max(pi)[1])][1])
 
   ## Best call based on scaller
   if(!is.null(scaller)){
@@ -221,7 +221,7 @@ callEnsemble_Multi <- function(X,
   ## Call subtypes
   eList <-
     lapply(ens, function(ei){
-      callSubtypes(mods = ei, X = X, geneSet, nClust, verbose)
+      GSClassifier:::callSubtypes(mods = ei, X = X, geneSet, nClust, verbose)
     })
   ePart <- lapply(eList, function(a)
     a[, 3:(2 + nClust)])
@@ -233,7 +233,7 @@ callEnsemble_Multi <- function(X,
   ## Best call of maximum strategy
   bestCall_max <-
     apply(eMeds, 1, function(pi)
-      colnames(eMeds)[which(pi == max(pi)[1])])
+      colnames(eMeds)[which(pi == max(pi)[1])][1])
 
   ## Best call based on scaller
   if(!is.null(scaller)){
@@ -374,7 +374,7 @@ parCallEnsemble <- function(X,
   ## Best call of maximum strategy
   bestCall_max <-
     apply(eMeds, 1, function(pi)
-      colnames(eMeds)[which(pi == max(pi)[1])])
+      colnames(eMeds)[which(pi == max(pi)[1])][1])
 
   ## Best call based on scaller
   if(!is.null(scaller)){
