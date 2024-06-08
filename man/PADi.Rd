@@ -81,7 +81,7 @@ res_padi <- PADi(X = X, verbose = F)
 #   geneAnnotation = NULL,
 #   geneSet = NULL,
 #   scaller = NULL,
-#   geneids = 'ensembl',
+#   geneid = 'ensembl',
 #   matchmode = 'fix',
 #   subtype = 'PAD.train_20200110',
 #   verbose = T,

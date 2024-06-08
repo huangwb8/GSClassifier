@@ -1,7 +1,7 @@
 Package: GSClassifier
 Type: Package
 Title: Gene Signature Classifier
-Version: 0.2.12
+Version: 0.2.13
 Authors@R:
     person(given = "Weibin",
            family = "Huang",
@@ -12,7 +12,7 @@ Description: A comprehensive classification tool based on pure transcriptomics f
 License: Apache-2.0
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports: 
     doParallel,
     parallel,
