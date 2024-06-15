@@ -5,6 +5,7 @@
 #' @description Estimate co-expression genes distribution
 #' @param sets a list containing series of gene symbols
 #' @inheritParams ccs
+#' @importFrom luckyBase LuckyVerbose
 #' @import foreach
 #' @import parallel
 #' @import doParallel
@@ -21,7 +22,7 @@
 #' resM <- coSet(sets,numCores=6)
 #' print(resM)
 #' @export
-coSet <- function(sets, numCores=1){
+coSet <- function(sets, verbose = T, numCores=1){
 
   # Test
   if(F){
@@ -47,6 +48,7 @@ coSet <- function(sets, numCores=1){
   # Add value
   if(numCores<=1){
     for(i in 1:length(sets)){ # i=1
+      if(verbose) LuckyVerbose('coSet: processing GeneSet - ', names(sets)[i],'...')
       set <- sets[[i]]
       c_set <- length(set)
       M1 <- matrix(1, nrow = c_set, ncol = c_set, dimnames = list(set, set))
@@ -66,6 +68,7 @@ coSet <- function(sets, numCores=1){
   }
 
   # Output
+  if(verbose) LuckyVerbose('coSet: All done!')
   return(M)
 
 }

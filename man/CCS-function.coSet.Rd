@@ -4,7 +4,7 @@
 \alias{coSet}
 \title{coSet}
 \usage{
-coSet(sets, numCores = 1)
+coSet(sets, verbose = T, numCores = 1)
 }
 \arguments{
 \item{sets}{a list containing series of gene symbols}

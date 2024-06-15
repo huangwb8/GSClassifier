@@ -243,8 +243,12 @@ makeSetData <- function(Xmat,geneSet) {
         set2 <- geneSet[[j2]]
         vals1 <- Xmat[rownames(Xmat) %in% set1,i]
         vals2 <- Xmat[rownames(Xmat) %in% set2,i]
-        res1 <- sapply(vals1, function(v1) sum(v1 > vals2, na.rm=T))
-        res0[idx] <- sum(res1, na.rm = T) / (length(vals1) * length(vals2))
+        if(length(vals1) == 0|length(vals2) == 0){
+          res0[idx] <- 0 # weight it as 0
+        } else {
+          res1 <- sapply(vals1, function(v1) sum(v1 > vals2, na.rm=T))
+          res0[idx] <- sum(res1, na.rm = T) / (length(vals1) * length(vals2))
+        }
         idx <- idx+1
       }
     }
