@@ -76,7 +76,7 @@ fitSubtypeModel <- function(Xs,
                     geneSet = geneSet,
                     subtype = yi,
                     ptail = ptail,
-                    breakVec=breakVec)
+                    breakVec = breakVec)
     dat  <- res0$dat
     Xbin <- dat$Xbin
     if (verbose)
@@ -186,15 +186,15 @@ fitEnsembleModel <- function(Xs,
   xgboost.seeds <- sample(1:100000, size = n, replace = F)
 
   # Parallel core control
-  numCores = {
-    if(is.null(params$device) | params$device %in% 'cpu'){
-      numCores
-    } else if(params$device %in% c('gpu','cuda')){
-      min(6, round(numCores/4))
-    } else {
-      stop('fitEnsembleModel: wrong device in xgboost parameters! Please set one of "cpu", "gpu", or "cuda"!')
-    }
-  }
+  # numCores = {
+  #   if(is.null(params$device) | params$device %in% 'cpu'){
+  #     numCores
+  #   } else if(params$device %in% c('gpu','cuda')){
+  #     min(6, round(numCores/4))
+  #   } else {
+  #     stop('fitEnsembleModel: wrong device in xgboost parameters! Please set one of "cpu", "gpu", or "cuda"!')
+  #   }
+  # }
 
   # Assistant function
   fitFun <- function(i, verbose) {

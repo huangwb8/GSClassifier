@@ -323,7 +323,7 @@ parCallEnsemble <- function(X,
   XL <- spliteMatrix(X, cutoff = 10)
 
   ## Parallel call subtypes
-  time_int <- system.time({
+  if(T){
     # eList_bind
     eList_bind <- function(eL1, eL2) {
       if (is.null(eL1)) {
@@ -359,13 +359,14 @@ parCallEnsemble <- function(X,
       ),
       envir = environment()
     )
-    eList <-
-      foreach(i = 1:length(XL), .combine = eList_bind) %dopar% lapply(ens, function(ei)
-        callSubtypes(mods = ei, X = XL[[i]], geneSet, clusterName, verbose))
+    time_int <- system.time({
+      eList <-
+        foreach(i = 1:length(XL), .combine = eList_bind) %dopar% lapply(ens, function(ei)
+          callSubtypes(mods = ei, X = XL[[i]], geneSet, clusterName, verbose))})
     stopImplicitCluster()
     stopCluster(cl)
-  })
-  if (verbose) LuckyVerbose('parCallEnsemble: Consuming time of parallel process is ', round(sum(time_int, na.rm = T), 2), 's.')
+  }
+  if(verbose) LuckyVerbose('parCallEnsemble: Consuming time of parallel process is ', round(sum(time_int, na.rm = T), 2), 's.')
 
   ## Clean
   ePart <- lapply(eList, function(a)
