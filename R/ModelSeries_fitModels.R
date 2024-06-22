@@ -372,6 +372,11 @@ trainDataProc_X <- function(Xmat,
 #' @param genes Genes for modeling
 #' @param verbose whether report modeling process
 #' @param seed a seed for xgboost
+#' @param nround.mode One of \code{fixed} and \code{polling}. \code{fixed} mode is recommended!
+#' \itemize{
+#'   \item \code{polling} Default but legacy feature, which means to call the \code{best_iteration} via \code{xgb.cv}
+#'   \item \code{fixed} Use the default \code{nrounds} in \code{params}, so it's faster(10-20 folds) than \code{polling}.
+#' }
 #' @inheritParams trainDataProc
 #' @importFrom xgboost xgboost xgb.cv xgb.DMatrix
 #' @return A single xgboost classifier.
@@ -387,6 +392,7 @@ cvFitOneModel <- function(Xbin, Ybin, genes,
                             colsample_bytree = 1,
                             min_child_weight = 1
                           ),
+                          nround.mode = c('fixed', 'polling')[2],
                           breakVec=c(0, 0.25, 0.5, 0.75, 1.0),
                           seed = 102,
                           verbose = F){
@@ -444,45 +450,56 @@ cvFitOneModel <- function(Xbin, Ybin, genes,
 
   # Data
   dtrain <- xgb.DMatrix(Xbin, label = Ybin)
-  n = 1000
-  set.seed(seed); seeds <- sample(1:(10*n), n + 10, replace = F)
   params_xg <- params[-match(c('nrounds', 'nfold'), names(params))]
 
   # Select nrounds
-  for(i in 1:n){
-    x <- tryCatch(
-      {
-        set.seed(seeds[i])
-        cvRes <- xgb.cv(
-          params = params_xg,
-          nrounds = params$nrounds,
-          nfold = params$nfold,
-          data = dtrain,
-          early_stopping_rounds=10,
-          metrics = list("logloss", "auc"),
-          objective = "binary:logistic",
-          verbose = ifelse(verbose,1,0)
-        )
-      },
-      error = function(e)e)
-    if('message' %in% names(x)){
-      if(verbose) LuckyVerbose('Attention! AUC: the dataset only contains pos or neg samples. Repeat xgb.cv')
-      x_error <- x
-      newSeed <- seeds[n+5]
-    } else {
-      cvRes <- x
-      newSeed <- seeds[i]
-      break
-    }
-  }
+  if(nround.mode == 'polling'){
 
-  # Best iteration
-  if(exists('cvRes')){
-    if(verbose) LuckyVerbose('Best interation: ',cvRes$best_iteration)
-    best_iteration <- cvRes$best_iteration
+    # Seeds
+    n = 1000
+    set.seed(seed); seeds <- sample(1:(10*n), n + 10, replace = F)
+
+    # Polling
+    for(i in 1:n){
+      x <- tryCatch(
+        {
+          set.seed(seeds[i])
+          cvRes <- xgb.cv(
+            params = params_xg,
+            nrounds = params$nrounds,
+            nfold = params$nfold,
+            data = dtrain,
+            early_stopping_rounds=10,
+            metrics = list("logloss", "auc"),
+            objective = "binary:logistic",
+            verbose = ifelse(verbose,1,0)
+          )
+        },
+        error = function(e)e)
+      if('message' %in% names(x)){
+        if(verbose) LuckyVerbose('Attention! AUC: the dataset only contains pos or neg samples. Repeat xgb.cv')
+        x_error <- x
+        newSeed <- seeds[n+5]
+      } else {
+        cvRes <- x
+        newSeed <- seeds[i]
+        break
+      }
+    }
+
+    # Best iteration
+    if(exists('cvRes')){
+      if(verbose) LuckyVerbose('Best interation: ',cvRes$best_iteration)
+      best_iteration <- cvRes$best_iteration
+    } else {
+      if(verbose) LuckyVerbose('Best interation unavailable. Use ', params$nrounds,' as iteration.')
+      best_iteration <- params$nrounds
+    }
+  } else if(nround.mode == 'fixed'){
+    best_iteration <- params$nrounds
+    newSeed <- seed
   } else {
-    if(verbose) LuckyVerbose('Best interation unavailable. Use 100 as iteration.')
-    best_iteration <- 100
+    stop('Wrong nround mode! Please select one of "fixed" and "polling"!')
   }
 
   # Xgboost via best interation

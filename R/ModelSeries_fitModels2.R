@@ -33,6 +33,7 @@ fitSubtypeModel <- function(Xs,
                               colsample_bytree = 1,
                               min_child_weight = 1
                             ),
+                            nround.mode = c('fixed', 'polling')[2],
                             xgboost.seed = 105,
                             caret.grid = expand.grid(
                               nrounds = c(10,15),
@@ -95,6 +96,7 @@ fitSubtypeModel <- function(Xs,
         breakVec = breakVec,
         genes = dat$Genes,
         seed = xgboost.seeds[i],
+        nround.mode = nround.mode,
         verbose = verbose
         )
     } else {
@@ -150,6 +152,7 @@ fitEnsembleModel <- function(Xs,
                                colsample_bytree = 1,
                                min_child_weight = 1
                              ),
+                             nround.mode = c('fixed', 'polling')[2],
                              xgboost.seed = 105,
                              caret.grid = expand.grid(
                                nrounds = c(10,15),
@@ -168,6 +171,7 @@ fitEnsembleModel <- function(Xs,
     geneSet = readRDS(system.file("extdata", paste0('PAD.train_20200110.rds'), package = "GSClassifier"))$geneSet
     LuckyVerbose('PAD subtype training...')
   }
+
 
   # Missing value imputation
   Xs <- na_fill(Xs,
@@ -208,6 +212,7 @@ fitEnsembleModel <- function(Xs,
       na.fill.seed = na.fill.seed,
       breakVec = breakVec,
       params = params,
+      nround.mode = nround.mode,
       xgboost.seed = xgboost.seeds[i],
       caret.grid = caret.grid,
       caret.seed = caret.seed,
@@ -274,16 +279,17 @@ fitEnsembleModel <- function(Xs,
   clusterExport(cl, 'fitFun',  envir = environment())
 
   # Parallel process
-  ens <- parLapply(
-    cl = cl,
-    X = 1:n,
-    fun = function(x)
-      fitFun(x, verbose = verbose)
-  )
-
-  if (verbose)
-    LuckyVerbose('fitEnsembleModel: End parallel process!')
+  time_int <- system.time({
+    ens <- parLapply(
+      cl = cl,
+      X = 1:n,
+      fun = function(x)
+        fitFun(x, verbose = verbose)
+    )
+  })
   stopCluster(cl)
+  if (verbose)
+    LuckyVerbose('fitEnsembleModel: Consuming time of parallel process is ', round(sum(time_int, na.rm = T), 2), 's.')
 
   # Output results
   res <- list(

@@ -14,8 +14,9 @@ fitEnsembleModel(
   sampSize = 0.7,
   sampSeed = 2020,
   breakVec = c(0, 0.25, 0.5, 0.75, 1),
-  params = list(nrounds = 15, max_depth = 10, eta = 0.5, nthread = 5, colsample_bytree =
-    1, min_child_weight = 1),
+  params = list(device = "cpu", nrounds = 15, max_depth = 10, eta = 0.5, nthread = 5,
+    colsample_bytree = 1, min_child_weight = 1),
+  nround.mode = c("fixed", "polling")[2],
   xgboost.seed = 105,
   caret.grid = expand.grid(nrounds = c(10, 15), max_depth = c(5, 10), eta = c(0.01, 0.1,
     0.3), gamma = c(0.5, 0.3), colsample_bytree = 1, min_child_weight = 1, subsample =
@@ -47,6 +48,12 @@ fitSubtypeModel}
 \item{breakVec}{vector of break points, used to bin expression data}
 
 \item{params}{The parameters for \code{\link[xgboost]{xgb.train}}. 1. xgb.cv only: nfold; 2. xgboost: nrounds, max_depth, eta, nthread, colsample_bytree, min_child_weight.}
+
+\item{nround.mode}{One of \code{fixed} and \code{polling}. \code{fixed} mode is recommended!
+\itemize{
+  \item \code{polling} Default but legacy feature, which means to call the \code{best_iteration} via \code{xgb.cv}
+  \item \code{fixed} Use the default \code{nrounds} in \code{params}, so it's faster(10-20 folds) than \code{polling}.
+}}
 
 \item{xgboost.seed}{Seed for xgboost.}
 
