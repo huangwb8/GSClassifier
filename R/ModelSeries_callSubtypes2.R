@@ -128,12 +128,14 @@ callEnsemble_One <- function(X,
     geneAnnotation <- l$geneAnnotation
     ens = l$ens$Model
     nClust = length(ens[[1]])
+    clusterName <- sort(names(ens[[1]]),decreasing = F)
     geneSet = l$geneSet
 
   } else {
     # Use self-defined data
     if(verbose) LuckyVerbose('Use self-defined classifier...')
     nClust = length(ens[[1]])
+    clusterName <- sort(names(ens[[1]]),decreasing = F)
   }
 
   ## Matched data
@@ -144,13 +146,13 @@ callEnsemble_One <- function(X,
   ## Call subtypes
   eList <-
     lapply(ens, function(ei)
-      callSubtypes(mods = ei, X = X2, geneSet, nClust, verbose))
+      callSubtypes(mods = ei, X = X2, geneSet, clusterName, verbose))
   ePart <- lapply(eList, function(a)
     a[, 3:(2 + nClust)])
   eStack <- array(unlist(ePart) , c(ncol(X2), nClust, length(ens)))
   eMeds  <- apply(eStack , 1:2 , median)
   eMeds <- as.data.frame(eMeds)
-  colnames(eMeds) <- 1:nClust # names(mods)
+  colnames(eMeds) <- clusterName
 
   ## Best call of maximum strategy
   bestCall_max <-
@@ -173,7 +175,7 @@ callEnsemble_One <- function(X,
     BestCall_Max = bestCall_max,
     eMeds
   )
-  colnames(res0)[4:(3 + nClust)] <- 1:nClust
+  # colnames(res0)[4:(3 + nClust)] <- 1:nClust
   if(verbose) LuckyVerbose('All done!')
   return(res0[1, ])
 }
@@ -205,12 +207,14 @@ callEnsemble_Multi <- function(X,
     geneAnnotation <- l$geneAnnotation
     ens = l$ens$Model
     nClust = length(ens[[1]])
+    clusterName <- sort(names(ens[[1]]),decreasing = F)
     geneSet = l$geneSet
 
   } else {
     # Use self-defined data
     if(verbose) LuckyVerbose('Use self-defined classifier...')
     nClust = length(ens[[1]])
+    clusterName <- sort(names(ens[[1]]),decreasing = F)
   }
 
   ## Matched data
@@ -221,14 +225,14 @@ callEnsemble_Multi <- function(X,
   ## Call subtypes
   eList <-
     lapply(ens, function(ei){
-      GSClassifier:::callSubtypes(mods = ei, X = X, geneSet, nClust, verbose)
+      GSClassifier:::callSubtypes(mods = ei, X = X, geneSet, clusterName, verbose)
     })
   ePart <- lapply(eList, function(a)
     a[, 3:(2 + nClust)])
   eStack <- array(unlist(ePart) , c(ncol(X), nClust, length(ens)))
   eMeds  <- apply(eStack , 1:2 , median)
   eMeds <- as.data.frame(eMeds)
-  colnames(eMeds) <- 1:nClust # names(mods)
+  colnames(eMeds) <- clusterName
 
   ## Best call of maximum strategy
   bestCall_max <-
@@ -250,7 +254,7 @@ callEnsemble_Multi <- function(X,
     BestCall_Max = bestCall_max,
     eMeds
   )
-  colnames(res0)[4:(3 + nClust)] <- 1:nClust
+  # colnames(res0)[4:(3 + nClust)] <- 1:nClust
   if(verbose) LuckyVerbose('All done!')
   return(res0)
 }
@@ -304,12 +308,14 @@ parCallEnsemble <- function(X,
     geneAnnotation <- l$geneAnnotation
     ens = l$ens$Model
     nClust = length(ens[[1]])
+    clusterName <- sort(names(ens[[1]]),decreasing = F)
     geneSet = l$geneSet
 
   } else {
     # Use self-defined data
     LuckyVerbose('Use self-defined classifier...')
     nClust = length(ens[[1]])
+    clusterName <- sort(names(ens[[1]]),decreasing = F)
   }
 
   ## Matched data and splited
@@ -337,7 +343,7 @@ parCallEnsemble <- function(X,
     suppressMessages(
       registerDoParallel(cl)
     )
-    clusterExport(cl, c('ens', 'XL', 'geneSet', 'nClust', 'verbose'), envir =
+    clusterExport(cl, c('ens', 'XL', 'geneSet', 'clusterName', 'verbose'), envir =
                     environment())
     clusterExport(
       cl,
@@ -357,7 +363,7 @@ parCallEnsemble <- function(X,
     )
     eList <-
       foreach(i = 1:length(XL), .combine = eList_bind) %dopar% lapply(ens, function(ei)
-        callSubtypes(mods = ei, X = XL[[i]], geneSet, nClust, verbose))
+        callSubtypes(mods = ei, X = XL[[i]], geneSet, clusterName, verbose))
     stopImplicitCluster()
     stopCluster(cl)
   }
@@ -368,7 +374,7 @@ parCallEnsemble <- function(X,
   eStack <- array(unlist(ePart) , c(ncol(X), nClust, length(ens)))
   eMeds  <- apply(eStack , 1:2 , median)
   eMeds <- as.data.frame(eMeds)
-  colnames(eMeds) <- 1:nClust # names(mods)
+  colnames(eMeds) <- clusterName
 
   ## Best call
   ## Best call of maximum strategy
@@ -378,7 +384,7 @@ parCallEnsemble <- function(X,
 
   ## Best call based on scaller
   if(!is.null(scaller)){
-    bestCall_sc <- predict(scaller, as.matrix(eMeds)) + 1
+    bestCall_sc <- predict(scaller, as.matrix(eMeds), nthread = numCores) + 1
   } else {
     bestCall_sc <- NA
   }
@@ -391,7 +397,7 @@ parCallEnsemble <- function(X,
     BestCall_Max = bestCall_max,
     eMeds
   )
-  colnames(res0)[4:(3 + nClust)] <- 1:nClust
+  # colnames(res0)[4:(3 + nClust)] <- 1:nClust
   LuckyVerbose('All done!')
   return(res0)
 

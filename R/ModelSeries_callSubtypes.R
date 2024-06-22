@@ -210,11 +210,11 @@ callOneSubtype <- function(mods, X, ci, geneSet, nClust, verbose=T) {
 
 #' @description Make subtype calls for each sample
 #' @inheritParams callOneSubtype
-callSubtypes <- function(mods, X, geneSet, nClust=4, verbose=T) {
+callSubtypes <- function(mods, X, geneSet, clusterName, verbose=T) {
 
-  pList <- lapply(1:nClust, function(mi) callOneSubtype(mods, X, mi, geneSet, nClust, verbose))
+  pList <- lapply(clusterName, function(mi) callOneSubtype(mods, X, mi, geneSet, nClust, verbose))
   pMat  <- do.call('cbind', pList)
-  colnames(pMat) <- 1:nClust # names(mods)
+  colnames(pMat) <- clusterName # names(mods)
   bestCall <- apply(pMat, 1, function(pi) colnames(pMat)[which(pi == max(pi))][1])
   # 2022-9-27. There's no problem because bestcall_max is a legacy category strategy and would not be recommended.
   # bestCall <- apply(pMat, 1, function(pi) colnames(pMat)[which(pi == max(pi)[1])])
