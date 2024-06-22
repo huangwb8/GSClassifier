@@ -309,5 +309,6 @@ fitEnsembleModel <- function(Xs,
     ),
     Model = ens
   )
+  LuckyVerbose('fitEnsembleModel: All done!')
   return(res)
 }

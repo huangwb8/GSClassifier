@@ -309,6 +309,14 @@ trainDataProc <- function(Xmat, Yvec,
   } else {
     # With gene sets interaction
     Xset <- makeSetData(Xmat,geneSet) #--bug--
+    if(nGS > 3){
+      testRes <- sapply(1:nrow(Xset), function(gi) testFun(as.numeric(Xset[gi,]), Ybin))
+      Xset_feat <- GSClassifier:::featureSelection(
+        Xset, Ybin,
+        testRes = testRes,
+        ptail = ptail)  # subset genes
+      Xset <-  Xset_feat$Xsub
+    }
   }
 
   # join the data types and transpose
