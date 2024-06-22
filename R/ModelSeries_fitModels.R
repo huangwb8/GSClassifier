@@ -468,6 +468,7 @@ cvFitOneModel <- function(Xbin, Ybin, genes,
     if('message' %in% names(x)){
       if(verbose) LuckyVerbose('Attention! AUC: the dataset only contains pos or neg samples. Repeat xgb.cv')
       x_error <- x
+      newSeed <- seeds[n+5]
     } else {
       cvRes <- x
       newSeed <- seeds[i]
