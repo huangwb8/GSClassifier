@@ -74,7 +74,8 @@ fitSubtypeModel <- function(Xs,
                     Ys,
                     geneSet = geneSet,
                     subtype = yi,
-                    ptail = ptail)
+                    ptail = ptail,
+                    breakVec=breakVec)
     dat  <- res0$dat
     Xbin <- dat$Xbin
     if (verbose)
@@ -141,6 +142,7 @@ fitEnsembleModel <- function(Xs,
                              sampSeed = 2020,
                              breakVec = c(0, 0.25, 0.5, 0.75, 1.0),
                              params = list(
+                               device = 'cpu',
                                nrounds = 15,
                                max_depth = 10,
                                eta = 0.5,
@@ -173,10 +175,6 @@ fitEnsembleModel <- function(Xs,
                 seed = na.fill.seed,
                 verbose = verbose)
 
-  # Parallel Cores # https://stackoverflow.com/questions/21773199/r-makecluster-hangs-on-localhost-in-linux
-  if (verbose) LuckyVerbose('Start parallel process...')
-  cl <- makeCluster(numCores)
-
   # Seeds
   set.seed(sampSeed)
   seeds <- sample(1:100000, size = n, replace = F)
@@ -204,67 +202,91 @@ fitEnsembleModel <- function(Xs,
       caret.seed = caret.seed,
       ptail = ptail,
       verbose = verbose,
-      numCores = numCores
+      numCores = numCores # this only work for caret mode(legacy)
     )
     return(modi)
   }
 
-  # Parallel parameters
-  clusterExport(cl, 'Xs',  envir = environment())
-  clusterExport(cl, 'Ys',  envir = environment())
-  clusterExport(cl, 'geneSet',  envir = environment())
-  clusterExport(cl, 'na.fill.method',  envir = environment())
-  clusterExport(cl, 'na.fill.seed',  envir = environment())
-  clusterExport(cl, 'sampSize',  envir = environment())
-  clusterExport(cl, 'seeds',  envir = environment())
-  clusterExport(cl, 'caret.seed',  envir = environment())
-  clusterExport(cl, 'breakVec',  envir = environment())
-  clusterExport(cl, 'params',  envir = environment())
-  clusterExport(cl, 'xgboost.seeds',  envir = environment())
-  clusterExport(cl, 'ptail',  envir = environment())
-  clusterExport(cl, 'verbose',  envir = environment())
-  clusterExport(cl, 'caret.grid',  envir = environment())
-  clusterExport(cl, 'numCores',  envir = environment())
-  clusterExport(
-    cl,
-    c(
-      'fitSubtypeModel',
-      'trainDataProc',
-      'cvFitOneModel',
-      'cvFitOneModel2',
-      'makeSetData',
-      'makeGenePairs',
-      'breakBin',
-      'binaryGene',
-      'featureSelection',
-      'testFun'
-    ),
-    envir = environment()
-  )
-  clusterExport(cl, c('na_fill', 'is.one.na', 'rpart', 'predict'), envir =
-                  environment())
-  clusterExport(
-    cl,
-    c(
-      'xgb.DMatrix',
-      'xgb.cv',
-      'xgboost',
-      'trainControl',
-      'train',
-      'xgb.train',
-      'LuckyVerbose'
-    ),
-    envir = environment()
-  )
-  clusterExport(cl, 'fitFun',  envir = environment())
+  # Probability calculation
+  if(is.null(params$device) | params$device %in% 'cpu'){
 
-  # Parallel process
-  ens <- parLapply(
-    cl = cl,
-    X = 1:n,
-    fun = function(x)
-      fitFun(x, verbose = verbose)
-  )
+    # Parallel Cores # https://stackoverflow.com/questions/21773199/r-makecluster-hangs-on-localhost-in-linux
+    if (verbose) LuckyVerbose('fitEnsembleModel: Start parallel process via CPU ...')
+    cl <- makeCluster(numCores)
+
+    # Parallel parameters
+    clusterExport(cl, 'Xs',  envir = environment())
+    clusterExport(cl, 'Ys',  envir = environment())
+    clusterExport(cl, 'geneSet',  envir = environment())
+    clusterExport(cl, 'na.fill.method',  envir = environment())
+    clusterExport(cl, 'na.fill.seed',  envir = environment())
+    clusterExport(cl, 'sampSize',  envir = environment())
+    clusterExport(cl, 'seeds',  envir = environment())
+    clusterExport(cl, 'caret.seed',  envir = environment())
+    clusterExport(cl, 'breakVec',  envir = environment())
+    clusterExport(cl, 'params',  envir = environment())
+    clusterExport(cl, 'xgboost.seeds',  envir = environment())
+    clusterExport(cl, 'ptail',  envir = environment())
+    clusterExport(cl, 'verbose',  envir = environment())
+    clusterExport(cl, 'caret.grid',  envir = environment())
+    clusterExport(cl, 'numCores',  envir = environment())
+    clusterExport(
+      cl,
+      c(
+        'fitSubtypeModel',
+        'trainDataProc',
+        'cvFitOneModel',
+        'cvFitOneModel2',
+        'makeSetData',
+        'makeGenePairs',
+        'breakBin',
+        'binaryGene',
+        'featureSelection',
+        'testFun'
+      ),
+      envir = environment()
+    )
+    clusterExport(cl, c('na_fill', 'is.one.na', 'rpart', 'predict'), envir =
+                    environment())
+    clusterExport(
+      cl,
+      c(
+        'xgb.DMatrix',
+        'xgb.cv',
+        'xgboost',
+        'trainControl',
+        'train',
+        'xgb.train',
+        'LuckyVerbose'
+      ),
+      envir = environment()
+    )
+    clusterExport(cl, 'fitFun',  envir = environment())
+
+    # Parallel process
+    ens <- parLapply(
+      cl = cl,
+      X = 1:n,
+      fun = function(x)
+        fitFun(x, verbose = verbose)
+    )
+
+    if (verbose)
+      LuckyVerbose('fitEnsembleModel: End CPU parallel process!')
+    stopCluster(cl)
+  } else if(params$device %in% c('gpu','cuda')){
+
+    # Parallel process via GPU
+    if (verbose) LuckyVerbose('fitEnsembleModel: Start parallel process via CPU ...')
+    ens <- lapply(
+      X = 1:n,
+      FUN = function(x)
+        fitFun(x, verbose = verbose)
+    )
+    LuckyVerbose('fitEnsembleModel: End GPU parallel process!')
+  } else {
+    stop('fitEnsembleModel: wrong device in xgboost parameters! Please set one of "cpu", "gpu", or "cuda"!')
+  }
 
   # Output results
   res <- list(
@@ -284,10 +306,5 @@ fitEnsembleModel <- function(Xs,
     ),
     Model = ens
   )
-
-  if (verbose)
-    LuckyVerbose('End parallel process!')
-  stopCluster(cl)
-
   return(res)
 }

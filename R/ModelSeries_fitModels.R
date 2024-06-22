@@ -470,6 +470,7 @@ cvFitOneModel <- function(Xbin, Ybin, genes,
       x_error <- x
     } else {
       cvRes <- x
+      newSeed <- seeds[i]
       break
     }
   }
@@ -479,12 +480,12 @@ cvFitOneModel <- function(Xbin, Ybin, genes,
     if(verbose) LuckyVerbose('Best interation: ',cvRes$best_iteration)
     best_iteration <- cvRes$best_iteration
   } else {
-    if(verbose) LuckyVerbose('Best interation unavailable. use 10 as iteration.')
-    best_iteration <- 10
+    if(verbose) LuckyVerbose('Best interation unavailable. Use 100 as iteration.')
+    best_iteration <- 100
   }
 
   # Xgboost via best interation
-  set.seed(seeds[n+5])
+  set.seed(newSeed)
   bst <- xgboost(
     params = params_xg,
     data = Xbin,
