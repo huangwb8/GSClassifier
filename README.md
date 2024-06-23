@@ -61,7 +61,7 @@ Weibin Huang (黄伟斌);  <hwb2012@qq.com>; [Blog](https://blognas.hwb0307.com/
 
 ## :cd: License
 
-**GSClassifier** is released under the Apache-2.0 license. See [LICENSE](https://github.com/huangwb8/GSClassifier/blob/master/license.txt) for details.
+**GSClassifier** is released under the GPL-3.0 +  license. See [LICENSE](https://github.com/huangwb8/GSClassifier/blob/master/license.txt) for details.
 
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhuangwb8%2FGSClassifier.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhuangwb8%2FGSClassifier?ref=badge_large)
