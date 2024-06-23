@@ -9,7 +9,7 @@ Authors@R:
            email = "hwb2012@qq.com",
            comment = c(ORCID = "0000-0003-0159-435X"))
 Description: A comprehensive classification tool based on pure transcriptomics for precision medicine
-License: Apache-2.0
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
