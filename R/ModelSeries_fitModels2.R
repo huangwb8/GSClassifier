@@ -169,8 +169,9 @@ fitEnsembleModel <- function(Xs,
                              numCores = 2) {
   if (is.null(geneSet)) {
     geneSet = readRDS(system.file("extdata", paste0('PAD.train_20200110.rds'), package = "GSClassifier"))$geneSet
-    LuckyVerbose('PAD subtype training...')
+    if (verbose) LuckyVerbose('fitEnsembleModel: PAD subtype training...')
   }
+  if (verbose) LuckyVerbose('fitEnsembleModel: nround.mode = ',nround.mode,' ...')
 
 
   # Missing value imputation

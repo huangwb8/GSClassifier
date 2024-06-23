@@ -310,7 +310,8 @@ trainDataProc <- function(Xmat, Yvec,
     # With gene sets interaction
     Xset <- makeSetData(Xmat,geneSet) #--bug--
     if(nGS > 3){
-      testRes <- sapply(1:nrow(Xset), function(gi) testFun(as.numeric(Xset[gi,]), Ybin))
+      Xrank <- apply(Xset, 2, rank)
+      testRes <- sapply(1:nrow(Xrank), function(gi) testFun(as.numeric(Xrank[gi,]), Ybin))
       Xset_feat <- GSClassifier:::featureSelection(
         Xset, Ybin,
         testRes = testRes,

@@ -140,6 +140,7 @@ dataProc <- function(X,
   singleGenes <- genes[!str_detect(genes, ':')]
   singleGenes <- singleGenes[!singleGenes %in% featureNames]
   pairedGenes <- genes[str_detect(genes, ':')]
+  setFeatures <- genes[str_detect(genes, 's[0-9]{1,6}s[0-9]{1,6}')]
 
   # bin the expression data
   Xbinned <- apply(Xmat, 2, breakBin, breakVec)
@@ -155,6 +156,7 @@ dataProc <- function(X,
 
   # gene set features.
   Xset <- makeSetData(Xmat,geneSet)
+  Xset <- Xset[setFeatures,]
 
   # join the data types and transpose
   Xbin <- t(rbind(Xbinned, Xpairs, Xset))

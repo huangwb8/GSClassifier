@@ -47,6 +47,15 @@ geneMatch_fixed <- function(X,
       rowname_ensembl <- convert(rownames(X), as.character(name_col[geneid]), 'ENSEMBL', geneAnnotation)
       X <- X[!is.na(rowname_ensembl),]
       rownames(X) <- convert(rownames(X), as.character(name_col[geneid]), 'ENSEMBL', geneAnnotation)
+      # rowname_ensembl <- rowname_ensembl[!is.na(rowname_ensembl)]
+      # X <- mergeMatrixDup(
+      #   X,
+      #   mergeCol = F,
+      #   mergeRow = T,
+      #   fun_row = mean,
+      #   refRow = rowname_ensembl,
+      #   verbose = F
+      # )
       idx <- match(table = rownames(X), x = geneAnnotation$ENSEMBL)
       X2 <- X[idx,]
     } else {

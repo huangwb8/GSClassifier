@@ -3,9 +3,9 @@
 #' @rdname subtypeVector
 #' @title subtypeVector
 #' @description Automatic clustering based on expression matrix and gene expression profiles
-#' @param GEPs List. Gene expression profiles - Co-expressed modules from WGCNA, etc
+#' @param geneSet List. Gene expression profiles - Co-expressed modules from WGCNA, etc
 #' @param outlier.filter Integer. Set a small integer to remove outlier samples
-#' @param k the number of clusters you want. Default is the same as the number of \code{GEPs} types
+#' @param k the number of clusters you want. Default is the same as the number of \code{geneSet} types
 #' @inheritParams PAD
 #' @importFrom luckyBase mergeMatrixDup
 #' @importFrom luckyBase convert
@@ -28,7 +28,7 @@
 #' @export
 subtypeVector <- function(
     expr,
-    GEPs,
+    geneSet,
     cluster.method = c("ward.D2",'complete')[1],
     extra.annot = NULL,
     # extra.annot = ComplexHeatmap::HeatmapAnnotation(),
@@ -46,7 +46,7 @@ subtypeVector <- function(
 
     # set.seed(200); expr <- readRDS("E:/Sync/@Analysis/PanCan_Data/Other/Level_02/tcga_RSEM_gene_tpm.rds"); expr <- expr[sample(1:ncol(expr),1000, replace = F)];
     expr <- readRDS("E:/Sync/@Analysis/PanCan_Data/Other/Level_02/tcga_RSEM_gene_tpm.rds")
-    GEPs <- readRDS('E:/RCloud/database/Signature/report/Signature_PanCanWGCNA-Top10.rds')
+    geneSet <- readRDS('E:/RCloud/database/Signature/report/Signature_PanCanWGCNA-Top10.rds')
     cluster.method = "ward.D2"
     k = NULL
     extra.annot = NULL
@@ -55,23 +55,23 @@ subtypeVector <- function(
     outlier.filter = 2
   }
 
-  # Gene expression profiles (GEPs)
+  # Gene expression profiles (geneSet)
   if(T){
     if(verbose) LuckyVerbose('subtypeVector: Data preparation...')
-    GEPs_Gene <- unlist(GEPs)
-    coGene <- intersect(GEPs_Gene,rownames(expr))
+    geneSet_Gene <- unlist(geneSet)
+    coGene <- intersect(geneSet_Gene,rownames(expr))
     # ID match test
-    if(length(coGene) < length(GEPs_Gene)){
-      lack <- setdiff(GEPs_Gene,coGene)
-      if(verbose) LuckyVerbose('subtypeVector: Gene match:',sprintf('%.1f',length(coGene)*100/length(GEPs_Gene)),'%. Lack of ',paste0(lack,collapse = ', '),'.')
+    if(length(coGene) < length(geneSet_Gene)){
+      lack <- setdiff(geneSet_Gene,coGene)
+      if(verbose) LuckyVerbose('subtypeVector: Gene match:',sprintf('%.1f',length(coGene)*100/length(geneSet_Gene)),'%. Lack of ',paste0(lack,collapse = ', '),'.')
     } else {
       lack <- NULL
       if(verbose) LuckyVerbose('subtypeVector: Gene match: 100%.')
     }
-    for (i in 1:length(GEPs)) { # i=1
-      GEPs[[i]] <- GEPs[[i]][GEPs[[i]] %in% coGene]
+    for (i in 1:length(geneSet)) { # i=1
+      geneSet[[i]] <- geneSet[[i]][geneSet[[i]] %in% coGene]
     }
-    x <- as.matrix(expr)[as.character(unlist(GEPs)),]
+    x <- as.matrix(expr)[as.character(unlist(geneSet)),]
     xZ <- t(scale(t(x),center = T, scale = T))
   }
 
@@ -81,7 +81,7 @@ subtypeVector <- function(
     dis <- dist(t(xZ), method = "euclidean")
     hc <- hclust(dis, method =  cluster.method)
     if(is.null(k)){
-      k <- length(GEPs)
+      k <- length(geneSet)
     }
     subtype_vector <- cutree(hc, k)
   }
@@ -89,7 +89,7 @@ subtypeVector <- function(
   # Alignment
   if(T){
     if(verbose) LuckyVerbose('subtypeVector: Alignment...')
-    gene_annot <- ldply(GEPs,cbind)
+    gene_annot <- ldply(geneSet,cbind)
     colnames(gene_annot) <- c('module', 'gene');
 
     xZ_meanExpress <- mergeMatrixDup(
@@ -107,10 +107,10 @@ subtypeVector <- function(
 
     df_align <- data.frame(
       clusterSubtype = names(xZ_align),
-      GEPSubtype = str_extract(as.character(xZ_align), '[0-9]{1,4}'),
+      geneSetubtype = str_extract(as.character(xZ_align), '[0-9]{1,4}'),
       stringsAsFactors = F
     )
-    subtype_vector_aligned <- convert(subtype_vector, 'clusterSubtype', 'GEPSubtype', df_align)
+    subtype_vector_aligned <- convert(subtype_vector, 'clusterSubtype', 'geneSetubtype', df_align)
     names(subtype_vector_aligned) <- names(subtype_vector)
 
     # Remove outliers
@@ -133,9 +133,9 @@ subtypeVector <- function(
 
     # row annotation
     ra <- rowAnnotation(
-      GEPs = module_number,
+      geneSet = module_number,
       col = list(
-        GEPs = {cl <- WGCNA::labels2colors(as.numeric(module_number)); names(cl) <- module_number; cl}
+        geneSet = {cl <- WGCNA::labels2colors(as.numeric(module_number)); names(cl) <- module_number; cl}
       ),
       annotation_name_gp = gpar(fontsize = 13, fontface = "bold"),
       annotation_name_side = "top"
@@ -163,13 +163,13 @@ subtypeVector <- function(
     )
 
     if(!is.null(extra.annot)) p <- p %v% extra.annot
-    if(verbose) print(p)
+    # if(verbose) print(p)
   }
 
   # Output
   res <- list(
     Repeat = list(
-      GEPs = GEPs,
+      geneSet = geneSet,
       cluster.method = cluster.method,
       plot.title = plot.title,
       extra.annot = extra.annot
