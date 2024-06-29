@@ -152,6 +152,7 @@ callEnsemble_One <- function(X,
   eStack <- array(unlist(ePart) , c(ncol(X2), nClust, length(ens)))
   eMeds  <- apply(eStack , 1:2 , median)
   eMeds <- as.data.frame(eMeds)
+  colnames(eMeds) <-  clusterName
 
   ## Best call of maximum strategy
   bestCall_max <-
@@ -231,6 +232,7 @@ callEnsemble_Multi <- function(X,
   eStack <- array(unlist(ePart) , c(ncol(X), nClust, length(ens)))
   eMeds  <- apply(eStack , 1:2 , median)
   eMeds <- as.data.frame(eMeds)
+  colnames(eMeds) <-  clusterName
 
   ## Best call of maximum strategy
   bestCall_max <-
@@ -374,6 +376,7 @@ parCallEnsemble <- function(X,
   eStack <- array(unlist(ePart) , c(ncol(X), nClust, length(ens)))
   eMeds  <- apply(eStack , 1:2 , median)
   eMeds <- as.data.frame(eMeds)
+  colnames(eMeds) <-  clusterName
 
   ## Best call
   ## Best call of maximum strategy

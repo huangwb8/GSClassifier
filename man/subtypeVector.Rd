@@ -6,7 +6,7 @@
 \usage{
 subtypeVector(
   expr,
-  GEPs,
+  geneSet,
   cluster.method = c("ward.D2", "complete")[1],
   extra.annot = NULL,
   plot.title = NULL,
@@ -18,7 +18,7 @@ subtypeVector(
 \arguments{
 \item{expr}{RNA expression matrix. Samples in col and ENSEMBL genes in row.}
 
-\item{GEPs}{List. Gene expression profiles - Co-expressed modules from WGCNA, etc}
+\item{geneSet}{List. Gene expression profiles - Co-expressed modules from WGCNA, etc}
 
 \item{cluster.method}{One of \code{'ward.D2'}, \code{'complete'} or other
 methods in \code{\link[stats]{hclust}}. If \code{'randomForest'} was set,
@@ -29,7 +29,7 @@ classify the samples.}
 
 \item{plot.title}{The title of heatmap report.}
 
-\item{k}{the number of clusters you want. Default is the same as the number of \code{GEPs} types}
+\item{k}{the number of clusters you want. Default is the same as the number of \code{geneSet} types}
 
 \item{outlier.filter}{Integer. Set a small integer to remove outlier samples}
 
