@@ -322,7 +322,9 @@ parCallEnsemble <- function(X,
   res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X <- res0$Subset
   reportError(res0)
-  XL <- spliteMatrix(X, cutoff = 10)
+  XL <- spliteMatrix(X, cutoff = {
+    ifelse(ncol(X)<=160, 10, 100)
+  })
 
   ## Parallel call subtypes
   if(T){

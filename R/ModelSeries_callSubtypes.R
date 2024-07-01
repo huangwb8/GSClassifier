@@ -147,7 +147,9 @@ dataProc <- function(X,
   rownames(Xbinned) <- rownames(Xmat)
 
   # and subset the genes to those not in pairs
-  Xbinned <- Xbinned[singleGenes,]
+  if(length(singleGenes)>1){
+    Xbinned <- Xbinned[singleGenes,]
+  }
 
   # here we have expression data, and we're using the pairs model
   # so we need to make pairs features.
@@ -156,7 +158,9 @@ dataProc <- function(X,
 
   # gene set features.
   Xset <- makeSetData(Xmat,geneSet)
-  Xset <- Xset[setFeatures,]
+  if(length(setFeatures)>1){
+    Xset <- Xset[setFeatures,]
+  }
 
   # join the data types and transpose
   Xbin <- t(rbind(Xbinned, Xpairs, Xset))
