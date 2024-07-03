@@ -171,9 +171,9 @@ geneMatch_free<- function(X,
 #' @param geneMatchResult the \code{matchError} result of \code{\link{geneMatch}}
 reportError <- function(geneMatchResult) {
   err <- geneMatchResult[['matchError']]
-  LuckyVerbose(paste0("Percent missing genes: ",err*100,"%."))
+  LuckyVerbose(paste0("geneMatch: Percent missing genes=",err*100,"%."))
   if(err>0){
-    LuckyVerbose('Missing genes: ', paste0(geneMatchResult[['missGenes']], collapse = ', '))
+    LuckyVerbose('geneMatch: Missing genes=', paste0(geneMatchResult[['missGenes']], collapse = ', '))
   }
 }
 
