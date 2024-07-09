@@ -322,9 +322,10 @@ parCallEnsemble <- function(X,
   res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X <- res0$Subset
   reportError(res0)
-  XL <- spliteMatrix(X, cutoff = {
-    ifelse(ncol(X)<=160, 10, 100)
-  })
+  # XL <- spliteMatrix(X, cutoff = {
+  #   ifelse(ncol(X)<=1600, 10, 100)
+  # })
+  XL <- spliteMatrix(X, cutoff = round(ncol(X)/numCores))
 
   ## Parallel call subtypes
   if(T){
@@ -341,36 +342,41 @@ parCallEnsemble <- function(X,
     }
 
     # Parallel
-    cl <- makeCluster(numCores)
-    suppressMessages(
-      registerDoParallel(cl)
-    )
-    clusterExport(cl, c('ens', 'XL', 'geneSet', 'clusterName', 'verbose'), envir =
-                    environment())
-    clusterExport(
-      cl,
-      c(
-        'callSubtypes',
-        'callOneSubtype',
-        'dataProc',
-        'predict',
-        'createPairsFeatures',
-        'makeSetData',
-        'breakBin',
-        'binaryGene',
-        'str_detect',
-        'eList_bind'
-      ),
-      envir = environment()
-    )
-    time_int <- system.time({
+    time_int_1 <- system.time({
+      cl <- makeCluster(numCores)
+      suppressMessages(
+        registerDoParallel(cl)
+      )
+    })
+
+    time_int_2 <- system.time({
+      clusterExport(cl, c('ens', 'XL', 'geneSet', 'clusterName', 'verbose'), envir = environment())
+      clusterExport(
+        cl,
+        c(
+          'callSubtypes',
+          'callOneSubtype',
+          'dataProc',
+          'predict',
+          'createPairsFeatures',
+          'makeSetData',
+          'breakBin',
+          'binaryGene',
+          'str_detect',
+          'eList_bind'
+        ),
+        envir = environment()
+      )
+    })
+
+    time_int_3 <- system.time({
       eList <-
         foreach(i = 1:length(XL), .combine = eList_bind) %dopar% lapply(ens, function(ei)
           callSubtypes(mods = ei, X = XL[[i]], geneSet, clusterName, verbose))})
     stopImplicitCluster()
     stopCluster(cl)
   }
-  if(verbose) LuckyVerbose('parCallEnsemble: Consuming time of parallel process is ', round(sum(time_int, na.rm = T), 2), 's.')
+  if(verbose) LuckyVerbose('parCallEnsemble: Consuming time - ','GatherCore=', round(sum(time_int_1, na.rm = T), 2), 's; ','AllotData=', round(sum(time_int_2, na.rm = T), 2), 's; ','Parallel=', round(sum(time_int_3, na.rm = T), 2), 's...')
 
   ## Clean
   ePart <- lapply(eList, function(a)
