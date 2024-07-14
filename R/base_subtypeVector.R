@@ -186,7 +186,7 @@ subtypeVector <- function(
     Data = list(
       # meanExpressMatrix = xZ_meanExpress,
       expr = x[,names(subtype_vector_aligned)],
-      subtype = subtype_vector_aligned
+      subtype = translate_subtype(subtype_vector_aligned)
     ),
     MissGene = lack,
     Plot = p
@@ -197,6 +197,29 @@ subtypeVector <- function(
 }
 
 
+####%%%%%%%%%%%%%%%%Assistant function%%%%%%%%%%%%%%%%####
 
+#' @importFrom luckyBase convert
+translate_subtype <- function(subtype_vector_aligned){
+
+  n <- names(subtype_vector_aligned)
+
+  if(sum(grepl('Module_',subtype_vector_aligned)) == length(subtype_vector_aligned)){
+    # subtype = 'Module_xx'
+    subtype_vector_aligned <- gsub('Module_','',subtype_vector_aligned)
+  } else {
+    subtype_annot <- data.frame(
+      raw = unique(subtype_vector_aligned),
+      new = 1:length(unique(subtype_vector_aligned)),
+      stringsAsFactors = F
+    )
+    subtype_vector_aligned <- convert(subtype_vector_aligned,'raw','new',subtype_annot)
+  }
+
+  names(subtype_vector_aligned) <- n
+
+  return(subtype_vector_aligned)
+
+}
 
 
