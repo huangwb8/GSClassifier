@@ -107,7 +107,8 @@ subtypeVector <- function(
 
     df_align <- data.frame(
       clusterSubtype = names(xZ_align),
-      geneSetubtype = str_extract(as.character(xZ_align), '[0-9]{1,4}'),
+      # geneSetubtype = str_extract(as.character(xZ_align), '[0-9]{1,4}'),
+      geneSetubtype = as.character(xZ_align),
       stringsAsFactors = F
     )
     subtype_vector_aligned <- convert(subtype_vector, 'clusterSubtype', 'geneSetubtype', df_align)
@@ -128,14 +129,22 @@ subtypeVector <- function(
     if(verbose) LuckyVerbose('subtypeVector: Heatmap...')
 
     # data
-    module_number <- str_extract(gene_annot$module, '[0-9]{1,4}')
+    # module_number <- str_extract(gene_annot$module, '[0-9]{1,4}')
+    geneSet_vector <- as.character(gene_annot$module)
+    geneSet_unique <- unique(geneSet_vector)
+    geneSet_annot <- data.frame(
+      geneSet = geneSet_unique,
+      Color = c(mycolor, setdiff(scales::hue_pal()(length(geneSet_unique)), mycolor))[1:length(geneSet_unique)],
+      stringsAsFactors = F
+    )
     xZ <- xZ[as.character(gene_annot$gene), names(subtype_vector_aligned)]
+
 
     # row annotation
     ra <- rowAnnotation(
-      geneSet = module_number,
+      geneSet = geneSet_vector,
       col = list(
-        geneSet = {cl <- WGCNA::labels2colors(as.numeric(module_number)); names(cl) <- module_number; cl}
+        geneSet = {col <- convert(geneSet_vector, 'geneSet','Color',geneSet_annot); names(col) <- geneSet_vector; col}
       ),
       annotation_name_gp = gpar(fontsize = 13, fontface = "bold"),
       annotation_name_side = "top"
@@ -150,7 +159,7 @@ subtypeVector <- function(
                    show_column_names = F,
                    show_row_names = F,
                    column_split = as.character(subtype_vector_aligned),
-                   row_split = module_number,
+                   row_split = geneSet_vector,
                    clustering_distance_rows = "euclidean",
                    clustering_distance_columns = "euclidean",
                    column_names_gp = gpar(fontsize = 12, fontface = "bold"),
