@@ -46,26 +46,29 @@ coSet <- function(sets, verbose = T, numCores=1){
   M <- matrix(0, nrow = c, ncol = c, dimnames = list(element, element))
 
   # Add value
-  if(numCores<=1){
-    for(i in 1:length(sets)){ # i=1
-      if(verbose) LuckyVerbose('coSet: processing GeneSet - ', names(sets)[i],'...')
-      set <- sets[[i]]
-      c_set <- length(set)
-      M1 <- matrix(1, nrow = c_set, ncol = c_set, dimnames = list(set, set))
-      M <- M + reshapeMatrix(M1, M)
+  time_int_1 <- system.time({
+    if(numCores<=1){
+      for(i in 1:length(sets)){ # i=1
+        if(verbose) LuckyVerbose('coSet: processing GeneSet - ', names(sets)[i],'...')
+        set <- sets[[i]]
+        c_set <- length(set)
+        M1 <- matrix(1, nrow = c_set, ncol = c_set, dimnames = list(set, set))
+        M <- M + reshapeMatrix(M1, M)
+      }
+    } else {
+      # Use parallel strategy
+      cl <- makeCluster(numCores)
+      registerDoParallel(cl)
+      M <- foreach(i = 1:length(sets), .combine = '+') %dopar% {
+        set <- sets[[i]]
+        c_set <- length(set)
+        M1 <- matrix(1, nrow = c_set, ncol = c_set, dimnames = list(set, set))
+        GSClassifier:::reshapeMatrix(M1, M)
+      }
+      stopCluster(cl)
     }
-  } else {
-    # Use parallel strategy
-    cl <- makeCluster(numCores)
-    registerDoParallel(cl)
-    M <- foreach(i = 1:length(sets), .combine = '+') %dopar% {
-      set <- sets[[i]]
-      c_set <- length(set)
-      M1 <- matrix(1, nrow = c_set, ncol = c_set, dimnames = list(set, set))
-      GSClassifier:::reshapeMatrix(M1, M)
-    }
-    stopCluster(cl)
-  }
+  })
+  if(verbose) LuckyVerbose('coSet: Comsuming time = ', round(sum(time_int_1, na.rm = T), 2), 's...')
 
   # Output
   if(verbose) LuckyVerbose('coSet: All done!')

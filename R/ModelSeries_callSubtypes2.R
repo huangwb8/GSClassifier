@@ -266,6 +266,7 @@ callEnsemble_Multi <- function(X,
 #' @param numCores No. of CPU core
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom doParallel registerDoParallel stopImplicitCluster
+#' @importFrom stringr str_detect
 #' @import foreach xgboost
 #' @details 1. Data of one sample was not supported. Please use \code{\link{callEnsemble}} instead. \cr
 #' 2. The sample of \code{X} must be over 10!
@@ -314,8 +315,9 @@ parCallEnsemble <- function(X,
   } else {
     # Use self-defined data
     LuckyVerbose('parCallEnsemble: Use self-defined classifier...')
-    nClust = length(ens[[1]])
-    clusterName <- sort(names(ens[[1]]),decreasing = F)
+    # clusterName <- sort(names(ens[[1]]),decreasing = F, na.last = TRUE) # This code help NA value to exist and the programe also run normally. However, NA value is meaning less, which is not recommended.
+    clusterName <- sort(names(ens[[1]]),decreasing = F, na.last = NA)
+    nClust = length(clusterName)
   }
 
   ## Matched data and splited
