@@ -246,8 +246,8 @@ PAD <- function(
     }
 
     # Get high/low subgroup
-    p1 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 1],], na.rm = T))
-    p2 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 2],], na.rm = T))
+    p1 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 1],], na.rm = T), na.rm = T)
+    p2 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 2],], na.rm = T), na.rm = T)
 
     if(p1>p2){
       id_high <- names(comp2)[comp2 == 1]
