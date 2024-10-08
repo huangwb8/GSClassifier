@@ -1,6 +1,5 @@
 
 
-
 #' @title Compare data from the same source but different scale
 #' @description Compare data from the same source but different scale
 #' @param X1 Matrix with sample col and gene row
@@ -33,83 +32,110 @@
 #' @export
 compareData <- function(X1,
                         X2,
-                        names=c('X1','X2'),
+                        names = c('X1', 'X2'),
                         width = 10,
                         height = 10,
-                        savePath = '.'){
-
+                        savePath = '.') {
   ## Data
-  coGene <- intersect(rownames(X1),rownames(X2))
-  coSample <- intersect(colnames(X1),colnames(X2))
-  X1 <- X1[coGene,coSample]
-  X2 <- X2[coGene,coSample]
+  coGene <- intersect(rownames(X1), rownames(X2))
+  coSample <- intersect(colnames(X1), colnames(X2))
+  X1 <- X1[coGene, coSample]
+  X2 <- X2[coGene, coSample]
 
   ## Correlation of expression for every gene
-  compareOneGene <- function(X1,X2,gene){ # gene='ENSG00000136167'
-    x1 <- as.numeric(X1[gene,])
-    x2 <- as.numeric(X2[gene,])
-    res <- cor.test(x1, x2,
-                    alternative = "two.sided",
-                    method = "spearman",
-                    conf.level = 0.95)
+  compareOneGene <- function(X1, X2, gene) {
+    # gene='ENSG00000136167'
+    x1 <- as.numeric(X1[gene, ])
+    x2 <- as.numeric(X2[gene, ])
+    res <- cor.test(
+      x1,
+      x2,
+      alternative = "two.sided",
+      method = "spearman",
+      conf.level = 0.95
+    )
     # res2 <- data.frame(
     #   Cor = res$estimate,
     #   P.value = res$p.value
     # )
     size = 30
-    p <- ggplot(data.frame(x1=x1,x2=x2),aes(x=x1,y=x2)) +
-      geom_point(alpha = 0.5,size = 11,colour = "#FB8072") +
-      stat_smooth(formula = y ~ x,method = 'glm') +
+    p <- ggplot(data.frame(x1 = x1, x2 = x2), aes(x = x1, y = x2)) +
+      geom_point(alpha = 0.5,
+                 size = 11,
+                 colour = "#FB8072") +
+      stat_smooth(formula = y ~ x, method = 'glm') +
       labs(x = names[1],
            y = names[2],
            title = gene) +
       theme_bw() +
       theme(
-        plot.title = element_text(size = size,colour = "black",face = "bold",hjust = 0.5),
-        axis.text = element_text(size = size/15*12,colour = "black",face = "bold"),
-        axis.title.x = element_text(size = size,colour = "black",face = "bold"),
-        axis.title.y = element_text(size = size,colour = "black",face = "bold"),
-        legend.text = element_text(size = size/15*12,colour = "black",face = "bold"),
-        legend.title = element_text(size = size/15*12,colour = "black",face = "bold"),
-        legend.position='right',
-        strip.background = element_rect(fill="white"),
-        strip.text = element_text(size = size/15*12,colour = "black",face = "bold")
+        plot.title = element_text(
+          size = size,
+          colour = "black",
+          face = "bold",
+          hjust = 0.5
+        ),
+        axis.text = element_text(
+          size = size / 15 * 12,
+          colour = "black",
+          face = "bold"
+        ),
+        axis.title.x = element_text(
+          size = size,
+          colour = "black",
+          face = "bold"
+        ),
+        axis.title.y = element_text(
+          size = size,
+          colour = "black",
+          face = "bold"
+        ),
+        legend.text = element_text(
+          size = size / 15 * 12,
+          colour = "black",
+          face = "bold"
+        ),
+        legend.title = element_text(
+          size = size / 15 * 12,
+          colour = "black",
+          face = "bold"
+        ),
+        legend.position = 'right',
+        strip.background = element_rect(fill = "white"),
+        strip.text = element_text(
+          size = size / 15 * 12,
+          colour = "black",
+          face = "bold"
+        )
       )
 
     # Output
-    l <- list(
-      Data = res,
-      Plot = p
-    )
+    l <- list(Data = res,
+              Plot = p)
     return(l)
 
   }
-  l <- alply(as.matrix(coGene),1,function(x) compareOneGene(X1,X2,x))
+  l <-
+    alply(as.matrix(coGene), 1, function(x)
+      compareOneGene(X1, X2, x))
   names(l) <- coGene
 
   ## Merge plot
-  cairo_pdf(paste0(savePath,'/Plot of compareData_',paste0(names,collapse = '-'),'.pdf'),width = width,height = height,onefile = T)
-  for(i in 1:length(l)) print(l[[i]]$Plot)
+  cairo_pdf(
+    paste0(
+      savePath,
+      '/Plot of compareData_',
+      paste0(names, collapse = '-'),
+      '.pdf'
+    ),
+    width = width,
+    height = height,
+    onefile = T
+  )
+  for (i in 1:length(l))
+    print(l[[i]]$Plot)
   dev.off()
 
   ## Output
   return(l)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

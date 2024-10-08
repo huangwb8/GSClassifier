@@ -1,7 +1,5 @@
 
 
-
-
 #' @title PADi
 #' @description PAD for individuals
 #' @param cancer.type The type of cancer

@@ -9,44 +9,55 @@
 #' @import luckyBase
 #' @return Matched index of genes to the expression matrix.
 #' @export
-geneMatch<- function(X,
-                     geneAnnotation = NULL,
-                     geneid='ensembl',
-                     matchmode = c('fix', 'free')[1]){
-  if(!matchmode %in% c('fix', 'free')){
+geneMatch <- function(X,
+                      geneAnnotation = NULL,
+                      geneid = 'ensembl',
+                      matchmode = c('fix', 'free')[1]) {
+  if (!matchmode %in% c('fix', 'free')) {
     stop("Please input one of 'fix' and 'free'. ")
-  } else if(matchmode == 'fix'){
-    geneMatch_fixed(X,geneAnnotation,geneid)
+  } else if (matchmode == 'fix') {
+    geneMatch_fixed(X, geneAnnotation, geneid)
   } else {
-    geneMatch_free(X,geneAnnotation,geneid)
+    geneMatch_free(X, geneAnnotation, geneid)
   }
 }
 
 #' @description fix mode of \code{geneMatch}
 geneMatch_fixed <- function(X,
-                      geneAnnotation = NULL,
-                      geneid='ensembl') {
-
+                            geneAnnotation = NULL,
+                            geneid = 'ensembl') {
   ## Gene annotation
-  if(is.null(geneAnnotation)){
-    geneAnnotation <- readRDS(system.file("extdata", "general-gene-annotation.rds", package = "GSClassifier"))[["hg38"]] # Only for human
+  if (is.null(geneAnnotation)) {
+    geneAnnotation <-
+      readRDS(
+        system.file("extdata", "general-gene-annotation.rds", package = "GSClassifier")
+      )[["hg38"]] # Only for human
   }
 
-  name_col <- c('SYMBOL','ENSEMBL','ENTREZID'); names(name_col) <- c('symbol','ensembl','entrez')
+  name_col <-
+    c('SYMBOL', 'ENSEMBL', 'ENTREZID')
+  names(name_col) <- c('symbol', 'ensembl', 'entrez')
 
   # Single or Mutiple samples
-  test <- is.matrix(X)|is.data.frame(X)
+  test <- is.matrix(X) | is.data.frame(X)
 
-  if(test){
-
+  if (test) {
     # Multiple data
-    if (!geneid %in% c('ensembl', 'symbol', 'entrez')){
+    if (!geneid %in% c('ensembl', 'symbol', 'entrez')) {
       LuckyVerbose("For geneids, please use:  symbol, entrez, ensembl")
       return(NA)
-    } else if (!geneid %in% 'ensembl'){
-      rowname_ensembl <- convert(rownames(X), as.character(name_col[geneid]), 'ENSEMBL', geneAnnotation)
-      X <- X[!is.na(rowname_ensembl),]
-      rownames(X) <- convert(rownames(X), as.character(name_col[geneid]), 'ENSEMBL', geneAnnotation)
+    } else if (!geneid %in% 'ensembl') {
+      rowname_ensembl <-
+        convert(rownames(X),
+                as.character(name_col[geneid]),
+                'ENSEMBL',
+                geneAnnotation)
+      X <- X[!is.na(rowname_ensembl), ]
+      rownames(X) <-
+        convert(rownames(X),
+                as.character(name_col[geneid]),
+                'ENSEMBL',
+                geneAnnotation)
       # rowname_ensembl <- rowname_ensembl[!is.na(rowname_ensembl)]
       # X <- mergeMatrixDup(
       #   X,
@@ -57,27 +68,35 @@ geneMatch_fixed <- function(X,
       #   verbose = F
       # )
       idx <- match(table = rownames(X), x = geneAnnotation$ENSEMBL)
-      X2 <- X[idx,]
+      X2 <- X[idx, ]
     } else {
       idx <- match(table = rownames(X), x = geneAnnotation$ENSEMBL)
-      X2 <- X[idx,]
+      X2 <- X[idx, ]
     }
 
     # Adds NA rows in missing genes
-    rownames(X2) <- as.character(geneAnnotation[,name_col[names(name_col) == 'ensembl']])
+    rownames(X2) <-
+      as.character(geneAnnotation[, name_col[names(name_col) == 'ensembl']])
 
 
   } else {
-
     # Single data
 
-    if (!geneid %in% c('ensembl', 'symbol', 'entrez')){
+    if (!geneid %in% c('ensembl', 'symbol', 'entrez')) {
       LuckyVerbose("For geneids, please use:  symbol, entrez, ensembl")
       return(NA)
-    } else if (!geneid %in% 'ensembl'){
-      name_ensembl <- convert(names(X), as.character(name_col[geneid]), 'ENSEMBL', geneAnnotation)
+    } else if (!geneid %in% 'ensembl') {
+      name_ensembl <-
+        convert(names(X),
+                as.character(name_col[geneid]),
+                'ENSEMBL',
+                geneAnnotation)
       X <- X[!is.na(name_ensembl)]
-      names(X) <- convert(names(X), as.character(name_col[geneid]), 'ENSEMBL', geneAnnotation)
+      names(X) <-
+        convert(names(X),
+                as.character(name_col[geneid]),
+                'ENSEMBL',
+                geneAnnotation)
       idx <- match(table = names(X), x = geneAnnotation$ENSEMBL)
       X2 <- X[idx]
     } else {
@@ -86,46 +105,57 @@ geneMatch_fixed <- function(X,
     }
 
     # Adds NA rows in missing genes
-    names(X2) <- as.character(geneAnnotation[,name_col[names(name_col) == 'ensembl']])
+    names(X2) <-
+      as.character(geneAnnotation[, name_col[names(name_col) == 'ensembl']])
 
   }
 
   # Missing level
   matchError <- sum(is.na(idx)) / nrow(geneAnnotation)
-  if(matchError >0){
-    missGenes <- as.character(geneAnnotation[,name_col[names(name_col) == 'ensembl']])[is.na(idx)]
+  if (matchError > 0) {
+    missGenes <-
+      as.character(geneAnnotation[, name_col[names(name_col) == 'ensembl']])[is.na(idx)]
   } else {
     missGenes <- NA
   }
 
   # Output
-  return(list(Subset=X2, matchError=matchError, missGenes = missGenes))
+  return(list(
+    Subset = X2,
+    matchError = matchError,
+    missGenes = missGenes
+  ))
 }
 
 #' @description free mode of \code{geneMatch}
-geneMatch_free<- function(X,
-                      geneAnnotation = NULL,
-                      geneid='ensembl') {
-
+geneMatch_free <- function(X,
+                           geneAnnotation = NULL,
+                           geneid = 'ensembl') {
   ## Gene annotation
-  if(is.null(geneAnnotation)){
-    geneAnnotation <- readRDS(system.file("extdata", "modelGeneAnnotation.rds", package = "GSClassifier"))
+  if (is.null(geneAnnotation)) {
+    geneAnnotation <-
+      readRDS(system.file("extdata", "modelGeneAnnotation.rds", package = "GSClassifier"))
   }
 
-  name_col <- c('SYMBOL','ENSEMBL','ENTREZID'); names(name_col) <- c('symbol','ensembl','entrez')
+  name_col <-
+    c('SYMBOL', 'ENSEMBL', 'ENTREZID')
+  names(name_col) <- c('symbol', 'ensembl', 'entrez')
 
   # Single or Mutiple samples
-  test <- is.matrix(X)|is.data.frame(X)
+  test <- is.matrix(X) | is.data.frame(X)
 
-  if(test){
-
+  if (test) {
     # Multiple data
 
     if (geneid == 'symbol') {
-      idx <- match(table = rownames(X), x = as.character(geneAnnotation$SYMBOL))  ### this is just for the EBPP genes ###
+      idx <-
+        match(table = rownames(X),
+              x = as.character(geneAnnotation$SYMBOL))  ### this is just for the EBPP genes ###
 
     } else if (geneid == 'entrez') {
-      idx <- match(table = rownames(X), x = as.character(geneAnnotation$ENTREZID))
+      idx <-
+        match(table = rownames(X),
+              x = as.character(geneAnnotation$ENTREZID))
 
     } else if (geneid == 'ensembl') {
       idx <- match(table = rownames(X), x = geneAnnotation$ENSEMBL)
@@ -135,19 +165,23 @@ geneMatch_free<- function(X,
       return(NA)
     }
 
-    X2 <- X[idx,]  ### Adds NA rows in missing genes
-    rownames(X2) <- as.character(geneAnnotation[,name_col[names(name_col) == geneid]])
+    X2 <- X[idx, ]  ### Adds NA rows in missing genes
+    rownames(X2) <-
+      as.character(geneAnnotation[, name_col[names(name_col) == geneid]])
 
 
   } else {
-
     # Single data
 
     if (geneid == 'symbol') {
-      idx <- match(table = names(X), x = as.character(geneAnnotation$SYMBOL))  ### this is just for the EBPP genes ###
+      idx <-
+        match(table = names(X),
+              x = as.character(geneAnnotation$SYMBOL))  ### this is just for the EBPP genes ###
 
     } else if (geneid == 'entrez') {
-      idx <- match(table = names(X), x = as.character(geneAnnotation$ENTREZID))
+      idx <-
+        match(table = names(X),
+              x = as.character(geneAnnotation$ENTREZID))
 
     } else if (geneid == 'ensembl') {
       idx <- match(table = names(X), x = geneAnnotation$ENSEMBL)
@@ -158,51 +192,53 @@ geneMatch_free<- function(X,
     }
 
     X2 <- X[idx]  ### Adds NA rows in missing genes
-    names(X2) <- as.character(geneAnnotation[,name_col[names(name_col) == geneid]])
+    names(X2) <-
+      as.character(geneAnnotation[, name_col[names(name_col) == geneid]])
 
   }
 
   matchError <- sum(is.na(idx)) / nrow(geneAnnotation)
 
-  return(list(Subset=X2, matchError=matchError))
+  return(list(Subset = X2, matchError = matchError))
 }
 
 #' @description Error report
 #' @param geneMatchResult the \code{matchError} result of \code{\link{geneMatch}}
 reportError <- function(geneMatchResult) {
   err <- geneMatchResult[['matchError']]
-  LuckyVerbose(paste0("geneMatch: Percent missing genes=",err*100,"%."))
-  if(err>0){
-    LuckyVerbose('geneMatch: Missing genes=', paste0(geneMatchResult[['missGenes']], collapse = ', '))
+  LuckyVerbose(paste0("geneMatch: Percent missing genes=", err * 100, "%."))
+  if (err > 0) {
+    LuckyVerbose('geneMatch: Missing genes=',
+                 paste0(geneMatchResult[['missGenes']], collapse = ', '))
   }
 }
 
 #' @description Correct X format
 #' @inheritParams geneMatch
-rightX <- function(X){
-
-  if(F){
-    X = expr2[,1]; names(X) <- rownames(expr2)
-    X = as.matrix(expr2[,1]); rownames(X) <- rownames(expr2)
+rightX <- function(X) {
+  if (F) {
+    X = expr2[, 1]
+    names(X) <- rownames(expr2)
+    X = as.matrix(expr2[, 1])
+    rownames(X) <- rownames(expr2)
     # X = expr2[,1:2]
   }
 
   multi <- (is.matrix(X) | is.data.frame(X))
 
-  if(multi){
-
+  if (multi) {
     # Matrix
 
-    if(ncol(X) == 1){
+    if (ncol(X) == 1) {
       # Single col matrix. To vector.
-      rX <- as.vector(X); names(rX) <- rownames(X)
+      rX <- as.vector(X)
+      names(rX) <- rownames(X)
     } else {
       # Multiple matirx. Normal.
       rX <- X
     }
 
   } else {
-
     # Vector
 
     rX <- X
@@ -212,6 +248,3 @@ rightX <- function(X){
   return(rX)
 
 }
-
-
-

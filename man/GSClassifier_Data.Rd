@@ -17,7 +17,7 @@ ImmuneSubtype is a model for personalized calling of immune subtype by Thorsson 
 PAD.train_20200110 is a model for personalized calling of Pan-immune Activation Dysfunction Subtypes(PAD).
 }
 \examples{
-PAD <- readRDS(system.file("extdata", "PAD.train_20200110", package = "GSClassifier"))
+PAD <- readRDS(system.file("extdata", "PAD.train_20200110.rds", package = "GSClassifier"))
 ImmuneSubtype <- readRDS(system.file("extdata", "ImmuneSubtype.rds", package = "GSClassifier"))
 }
 \author{

@@ -17,13 +17,14 @@ Estimate co-expression genes distribution
 }
 \examples{
 set.seed(4090)
+elements <- 1:6
 sets <- list(
   sample(elements, 3),
   sample(elements, 4),
   sample(elements, 2),
   sample(elements, 5),
   sample(elements, 3))
-resM <- coSet(sets,numCores=6)
+resM <- coSet(sets)
 print(resM)
 }
 \author{

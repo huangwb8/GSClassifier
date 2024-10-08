@@ -1,5 +1,6 @@
 
 
+
 #' @title callEnsemble
 #' @description Make subtype calls for each sample
 #' @param X a numeric RNA expression vector or matrix with gene names
@@ -38,9 +39,8 @@ callEnsemble <- function(X,
                          matchmode = c('fix', 'free')[1],
                          subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                          verbose = T) {
-
   # Check whether the subtype is internal
-  if(is.character(subtype)|is.null(subtype)){
+  if (is.character(subtype) | is.null(subtype)) {
     # Internal model
     subtype = subtype
   } else {
@@ -118,30 +118,32 @@ callEnsemble_One <- function(X,
 
   ## Load classifier data
   if (!is.null(subtype)) {
-
     # Use system data
 
-    if(verbose) LuckyVerbose('Use ', subtype, ' classifier...')
+    if (verbose)
+      LuckyVerbose('Use ', subtype, ' classifier...')
     l <-
       readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
     scaller <- l$scaller$Model
     geneAnnotation <- l$geneAnnotation
     ens = l$ens$Model
     nClust = length(ens[[1]])
-    clusterName <- sort(names(ens[[1]]),decreasing = F)
+    clusterName <- sort(names(ens[[1]]), decreasing = F)
     geneSet = l$geneSet
 
   } else {
     # Use self-defined data
-    if(verbose) LuckyVerbose('Use self-defined classifier...')
+    if (verbose)
+      LuckyVerbose('Use self-defined classifier...')
     nClust = length(ens[[1]])
-    clusterName <- sort(names(ens[[1]]),decreasing = F)
+    clusterName <- sort(names(ens[[1]]), decreasing = F)
   }
 
   ## Matched data
   res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X2 <- data.frame(target = res0$Subset, target2 = res0$Subset)
-  if(verbose) reportError(res0)
+  if (verbose)
+    reportError(res0)
 
   ## Call subtypes
   eList <-
@@ -160,7 +162,7 @@ callEnsemble_One <- function(X,
       colnames(eMeds)[which(pi == max(pi)[1])][1])
 
   ## Best call based on scaller
-  if(!is.null(scaller)){
+  if (!is.null(scaller)) {
     bestCall_sc <- predict(scaller, as.matrix(eMeds)) + 1
   } else {
     bestCall_sc <- NA
@@ -176,8 +178,9 @@ callEnsemble_One <- function(X,
     eMeds
   )
   colnames(res0)[4:(3 + nClust)] <- clusterName
-  if(verbose) LuckyVerbose('All done!')
-  return(res0[1, ])
+  if (verbose)
+    LuckyVerbose('All done!')
+  return(res0[1,])
 }
 
 
@@ -197,35 +200,41 @@ callEnsemble_Multi <- function(X,
                                verbose = T) {
   ## Load classifier data
   if (!is.null(subtype)) {
-
     # Use system data
 
-    if(verbose) LuckyVerbose('Use ', subtype, ' classifier...')
+    if (verbose)
+      LuckyVerbose('Use ', subtype, ' classifier...')
     l <-
       readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
     scaller <- l$scaller$Model
     geneAnnotation <- l$geneAnnotation
     ens = l$ens$Model
     nClust = length(ens[[1]])
-    clusterName <- sort(names(ens[[1]]),decreasing = F)
+    clusterName <- sort(names(ens[[1]]), decreasing = F)
     geneSet = l$geneSet
 
   } else {
     # Use self-defined data
-    if(verbose) LuckyVerbose('Use self-defined classifier...')
+    if (verbose)
+      LuckyVerbose('Use self-defined classifier...')
     nClust = length(ens[[1]])
-    clusterName <- sort(names(ens[[1]]),decreasing = F)
+    clusterName <- sort(names(ens[[1]]), decreasing = F)
   }
 
   ## Matched data
   res0 <- geneMatch(X, geneAnnotation, geneid, matchmode)
   X <- res0$Subset
-  if(verbose) GSClassifier:::reportError(res0)
+  if (verbose)
+    GSClassifier:::reportError(res0)
 
   ## Call subtypes
   eList <-
-    lapply(ens, function(ei){
-      GSClassifier:::callSubtypes(mods = ei, X = X, geneSet, clusterName, verbose)
+    lapply(ens, function(ei) {
+      GSClassifier:::callSubtypes(mods = ei,
+                                  X = X,
+                                  geneSet,
+                                  clusterName,
+                                  verbose)
     })
   ePart <- lapply(eList, function(a)
     a[, 3:(2 + nClust)])
@@ -240,7 +249,7 @@ callEnsemble_Multi <- function(X,
       colnames(eMeds)[which(pi == max(pi)[1])][1])
 
   ## Best call based on scaller
-  if(!is.null(scaller)){
+  if (!is.null(scaller)) {
     bestCall_sc <- predict(scaller, as.matrix(eMeds)) + 1
   } else {
     bestCall_sc <- NA
@@ -255,7 +264,8 @@ callEnsemble_Multi <- function(X,
     eMeds
   )
   colnames(res0)[4:(3 + nClust)] <-  clusterName
-  if(verbose) LuckyVerbose('All done!')
+  if (verbose)
+    LuckyVerbose('All done!')
   return(res0)
 }
 
@@ -283,9 +293,8 @@ parCallEnsemble <- function(X,
                             subtype = c('PAD.train_20200110', 'ImmuneSubtype')[1],
                             verbose = T,
                             numCores = 2) {
-
   # Check whether the subtype is internal
-  if(is.character(subtype)|is.null(subtype)){
+  if (is.character(subtype) | is.null(subtype)) {
     # Internal model
     subtype = subtype
   } else {
@@ -299,7 +308,6 @@ parCallEnsemble <- function(X,
 
   ## Load classifier data
   if (!is.null(subtype)) {
-
     # Use system data
 
     LuckyVerbose('Use ', subtype, ' classifier...')
@@ -309,14 +317,15 @@ parCallEnsemble <- function(X,
     geneAnnotation <- l$geneAnnotation
     ens = l$ens$Model
     nClust = length(ens[[1]])
-    clusterName <- sort(names(ens[[1]]),decreasing = F)
+    clusterName <- sort(names(ens[[1]]), decreasing = F)
     geneSet = l$geneSet
 
   } else {
     # Use self-defined data
     LuckyVerbose('parCallEnsemble: Use self-defined classifier...')
     # clusterName <- sort(names(ens[[1]]),decreasing = F, na.last = TRUE) # This code help NA value to exist and the programe also run normally. However, NA value is meaning less, which is not recommended.
-    clusterName <- sort(names(ens[[1]]),decreasing = F, na.last = NA)
+    clusterName <-
+      sort(names(ens[[1]]), decreasing = F, na.last = NA)
     nClust = length(clusterName)
   }
 
@@ -327,10 +336,10 @@ parCallEnsemble <- function(X,
   # XL <- spliteMatrix(X, cutoff = {
   #   ifelse(ncol(X)<=1600, 10, 100)
   # })
-  XL <- spliteMatrix(X, cutoff = round(ncol(X)/numCores))
+  XL <- spliteMatrix(X, cutoff = round(ncol(X) / numCores))
 
   ## Parallel call subtypes
-  if(T){
+  if (T) {
     # eList_bind
     eList_bind <- function(eL1, eL2) {
       if (is.null(eL1)) {
@@ -346,13 +355,13 @@ parCallEnsemble <- function(X,
     # Parallel
     time_int_1 <- system.time({
       cl <- makeCluster(numCores)
-      suppressMessages(
-        registerDoParallel(cl)
-      )
+      suppressMessages(registerDoParallel(cl))
     })
 
     time_int_2 <- system.time({
-      clusterExport(cl, c('ens', 'XL', 'geneSet', 'clusterName', 'verbose'), envir = environment())
+      clusterExport(cl,
+                    c('ens', 'XL', 'geneSet', 'clusterName', 'verbose'),
+                    envir = environment())
       clusterExport(
         cl,
         c(
@@ -374,11 +383,30 @@ parCallEnsemble <- function(X,
     time_int_3 <- system.time({
       eList <-
         foreach(i = 1:length(XL), .combine = eList_bind) %dopar% lapply(ens, function(ei)
-          callSubtypes(mods = ei, X = XL[[i]], geneSet, clusterName, verbose))})
+          callSubtypes(
+            mods = ei,
+            X = XL[[i]],
+            geneSet,
+            clusterName,
+            verbose
+          ))
+    })
     stopImplicitCluster()
     stopCluster(cl)
   }
-  if(verbose) LuckyVerbose('parCallEnsemble: Consuming time - ','GatherCore=', round(sum(time_int_1, na.rm = T), 2), 's; ','AllotData=', round(sum(time_int_2, na.rm = T), 2), 's; ','Parallel=', round(sum(time_int_3, na.rm = T), 2), 's...')
+  if (verbose)
+    LuckyVerbose(
+      'parCallEnsemble: Consuming time - ',
+      'GatherCore=',
+      round(sum(time_int_1, na.rm = T), 2),
+      's; ',
+      'AllotData=',
+      round(sum(time_int_2, na.rm = T), 2),
+      's; ',
+      'Parallel=',
+      round(sum(time_int_3, na.rm = T), 2),
+      's...'
+    )
 
   ## Clean
   ePart <- lapply(eList, function(a)
@@ -395,8 +423,9 @@ parCallEnsemble <- function(X,
       colnames(eMeds)[which(pi == max(pi)[1])][1])
 
   ## Best call based on scaller
-  if(!is.null(scaller)){
-    bestCall_sc <- predict(scaller, as.matrix(eMeds), numCores = numCores) + 1
+  if (!is.null(scaller)) {
+    bestCall_sc <-
+      predict(scaller, as.matrix(eMeds), numCores = numCores) + 1
   } else {
     bestCall_sc <- NA
   }

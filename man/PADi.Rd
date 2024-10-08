@@ -74,7 +74,7 @@ res_padi <- callEnsemble(
 ## Method2: use a specific function called 'PADi'
 res_padi <- PADi(X = X, verbose = F)
 
-## Method3: Parallel strategy for lots of samples (empirically >50) to save #' time. Not Run for small cohorts.
+## Method3: Parallel strategy for lots of samples (empirically >50) to save time. Not Run for small cohorts.
 # res_padi <- parCallEnsemble(
 #   X = X,
 #   ens = NULL,

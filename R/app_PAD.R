@@ -1,5 +1,4 @@
 
-
 #' @description classify a vector by specified classifier
 #' @param vector a vector
 #' @param classifier  a list of classifier
@@ -24,18 +23,19 @@
 #' )
 #' v1 <- classify(vector,classifier2)
 #' table(v1)
-classify <- function(vector,classifier,cover=T){
+classify <- function(vector, classifier, cover = T) {
   vector <- as.character(vector)
 
   ## standard vector
-  if(cover){
-    vector1 <- rep("Not Available",length(vector))
+  if (cover) {
+    vector1 <- rep("Not Available", length(vector))
   } else {
     vector1 <- vector
   }
 
   ## replace
-  for(i in 1:length(classifier)){ # i = 1
+  for (i in 1:length(classifier)) {
+    # i = 1
     n.i <- names(classifier)[i]
     c.i <- as.character(classifier[[i]])
     vector1[vector %in% c.i] <- n.i
@@ -77,75 +77,74 @@ classify <- function(vector,classifier,cover=T){
 #'   is a powerful stragety and may act well in larger dataset or complex gene
 #'   signatures.
 #' @examples
-#' extra.annot = HeatmapAnnotation(
-#' Dataset = id.dataset,
-#' col = list(
-#'   Dataset = if(T){
-#'     l <- mycolor[1:length(unique(id.dataset))];
-#'     names(l) <- unique(id.dataset);
-#'     l}
-#' ),
-#' annotation_name_gp = gpar(fontsize = 13, fontface = "bold"),
-#' show_legend = T
-#' )
+#' if(F){
+#'   extra.annot = HeatmapAnnotation(
+#'     Dataset = id.dataset,
+#'     col = list(
+#'       Dataset = if(T){
+#'         l <- mycolor[1:length(unique(id.dataset))];
+#'         names(l) <- unique(id.dataset);
+#'         l}
+#'     ),
+#'     annotation_name_gp = gpar(fontsize = 13, fontface = "bold"),
+#'     show_legend = T
+#   )
 #'
-#' res1 <- PAD(
-#'   expr = dm.combat.tumor,
-#'   PIAM = piam,
-#'   PIDG = pidg,
-#'   plot.title = 'PanSTAD',
-#'   cluster.method = 'ward.D2',
-#'   subtype = 'PAD.train_20200110',
-#'   extra.annot = extra.annot,
-#'   verbose = T
-#' )
+#'   res1 <- PAD(
+#'     expr = dm.combat.tumor,
+#'     PIAM = piam,
+#'     PIDG = pidg,
+#'     plot.title = 'PanSTAD',
+#'     cluster.method = 'ward.D2',
+#'     subtype = 'PAD.train_20200110',
+#'     extra.annot = extra.annot,
+#'     verbose = T
+#'   )
 #'
-#' # randomForest: time-consuming in large cohorts
-#' res2 <- PAD(
-#'   expr = dm.combat.tumor,
-#'   PIAM = piam,
-#'   PIDG = pidg,
-#'   cluster.method = 'randomForest',
-#'   rF.para = list(
-#'     seed = c(2020,485,58,152),
-#'     ntree = c(1000,1000),
-#'     k=c(2,2)
-#'   ),
-#'   subtype = 'PAD.train_20200110',
-#'   extra.annot = extra.annot,
-#'   plot.title = 'PanSTAD',
-#'   verbose = T
-#' )
+#'   # randomForest: time-consuming in large cohorts
+#'   res2 <- PAD(
+#'     expr = dm.combat.tumor,
+#'     PIAM = piam,
+#'     PIDG = pidg,
+#'     cluster.method = 'randomForest',
+#'     rF.para = list(
+#'       seed = c(2020,485,58,152),
+#'       ntree = c(1000,1000),
+#'       k=c(2,2)
+#'     ),
+#'     subtype = 'PAD.train_20200110',
+#'     extra.annot = extra.annot,
+#'     plot.title = 'PanSTAD',
+#'     verbose = T
+#'   )
+#' }
 #' @export
-PAD <- function(
-  expr,
-  PIAM = NULL,
-  PIDG = NULL,
-  cluster.method = c("ward.D2",
-                     'complete',
-                     'randomForest')[1],
-  rF.para = list(
-    seed = c(2020,485,4,8),
-    ntree = c(300,300),
-    k=c(2,2)
-  ),
-  extra.annot = NULL,
-  # extra.annot = ComplexHeatmap::HeatmapAnnotation(),
-  plot.title = NULL,
-  subtype = 'PAD.train_20200110',
-  verbose = T
-){
-
+PAD <- function(expr,
+                PIAM = NULL,
+                PIDG = NULL,
+                cluster.method = c("ward.D2",
+                                   'complete',
+                                   'randomForest')[1],
+                rF.para = list(
+                  seed = c(2020, 485, 4, 8),
+                  ntree = c(300, 300),
+                  k = c(2, 2)
+                ),
+                extra.annot = NULL,
+                # extra.annot = ComplexHeatmap::HeatmapAnnotation(),
+                plot.title = NULL,
+                subtype = 'PAD.train_20200110',
+                verbose = T) {
   ## Test
-  if(F){
+  if (F) {
     expr <- t(dataExpr)
     PIAM = piam
     PIDG = pidg
-    cluster.method = c("ward.D2",'complete','randomForest')[1]
+    cluster.method = c("ward.D2", 'complete', 'randomForest')[1]
     rF.para = list(
-      seed = c(2020,485,4,8),
-      ntree = c(300,300),
-      k=c(2,2)
+      seed = c(2020, 485, 4, 8),
+      ntree = c(300, 300),
+      k = c(2, 2)
     )
     plot.title = 'TCGA-STAD'
     verbose = T
@@ -156,35 +155,43 @@ PAD <- function(
   # nd <- c('NbClust','dplyr','ComplexHeatmap','reshape2','randomForest','cluster'); lucky::Plus.library(nd)
 
   ## PIAM & PIDG
-  l <- readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
-  if(is.null(PIAM)) {
+  l <-
+    readRDS(system.file("extdata", paste0(subtype, '.rds'), package = "GSClassifier"))
+  if (is.null(PIAM)) {
     PIAM <- l$geneSet$PIAM
-    cat('Use default PIAM...','\n')
+    cat('Use default PIAM...', '\n')
   }
-  if(is.null(PIDG)){
+  if (is.null(PIDG)) {
     PIDG <- l$geneSet$PIDG
-    cat('Use default PIDG...','\n')
+    cat('Use default PIDG...', '\n')
   }
 
   ## Data
-  coGene <- intersect(c(PIAM,PIDG),rownames(expr))
+  coGene <- intersect(c(PIAM, PIDG), rownames(expr))
   # ID match test
-  if(length(coGene) < length(c(PIAM,PIDG))){
-    lack <- setdiff(c(PIAM,PIDG),coGene)
-    cat('Gene match:',sprintf('%.1f',length(coGene)*100/length(c(PIAM,PIDG))),'%. Lack of ',paste0(lack,collapse = ', '),'.','\n')
+  if (length(coGene) < length(c(PIAM, PIDG))) {
+    lack <- setdiff(c(PIAM, PIDG), coGene)
+    cat(
+      'Gene match:',
+      sprintf('%.1f', length(coGene) * 100 / length(c(PIAM, PIDG))),
+      '%. Lack of ',
+      paste0(lack, collapse = ', '),
+      '.',
+      '\n'
+    )
   } else {
     lack <- NULL
-    cat('Gene match: 100%.','\n')
+    cat('Gene match: 100%.', '\n')
   }
   PIDG <- PIDG[PIDG %in% coGene]
   PIAM <- PIAM[PIAM %in% coGene]
-  x <- as.matrix(expr)[c(PIAM,PIDG),]
-  xZ <- t(scale(t(x),center = T, scale = T))
+  x <- as.matrix(expr)[c(PIAM, PIDG), ]
+  xZ <- t(scale(t(x), center = T, scale = T))
 
   ## PIAM subtypes
-  if(T){
-    xZ.piam <- as.data.frame(t(xZ[PIAM,]))
-    if(cluster.method != 'randomForest'){
+  if (T) {
+    xZ.piam <- as.data.frame(t(xZ[PIAM, ]))
+    if (cluster.method != 'randomForest') {
       # Use non-randomForest strategy
       # numComplete <- NbClust(xZ.piam,
       #                        distance = "euclidean",
@@ -197,120 +204,144 @@ PAD <- function(
       comp2 <- cutree(hc, 2)
     } else {
       # Use randomForest strategy
-      set.seed(rF.para$seed[1]); rf <- randomForest(x = xZ.piam, ntree = rF.para$ntree[1], proximity = T)
+      set.seed(rF.para$seed[1])
+      rf <-
+        randomForest(x = xZ.piam,
+                     ntree = rF.para$ntree[1],
+                     proximity = T)
       # dim(rf$proximity)
       # View(rf$proximity[1:5, 1:5])
       # importance(rf)
       dissMat <- sqrt(1 - rf$proximity)
-      set.seed(rF.para$seed[2]); pamRF <- pam(dissMat, k = rF.para$k[1])
+      set.seed(rF.para$seed[2])
+      pamRF <- pam(dissMat, k = rF.para$k[1])
       comp2 <- pamRF$clustering
     }
-    p1 <- sum(colMeans(xZ.piam[names(comp2)[comp2 == 1],], na.rm = T))
-    p2 <- sum(colMeans(xZ.piam[names(comp2)[comp2 == 2],], na.rm = T))
+    p1 <-
+      sum(colMeans(xZ.piam[names(comp2)[comp2 == 1], ], na.rm = T))
+    p2 <-
+      sum(colMeans(xZ.piam[names(comp2)[comp2 == 2], ], na.rm = T))
 
-    if(p1>p2){
+    if (p1 > p2) {
       id_high <- names(comp2)[comp2 == 1]
-      h <- rep('piam_high',length(id_high));names(h) <- id_high
+      h <- rep('piam_high', length(id_high))
+      names(h) <- id_high
       id_low <- names(comp2)[comp2 == 2]
-      l <- rep('piam_low',length(id_low));names(l) <- id_low
+      l <- rep('piam_low', length(id_low))
+      names(l) <- id_low
     } else {
       id_high <- names(comp2)[comp2 == 2]
-      h <- rep('piam_high',length(id_high));names(h) <- id_high
+      h <- rep('piam_high', length(id_high))
+      names(h) <- id_high
       id_low <- names(comp2)[comp2 == 1]
-      l <- rep('piam_low',length(id_low));names(l) <- id_low
+      l <- rep('piam_low', length(id_low))
+      names(l) <- id_low
     }
 
-    hl <- c(h,l)
+    hl <- c(h, l)
 
-    testPIAM <- data.frame(
-      ID = names(hl),
-      PIAM = hl,
-      stringsAsFactors = F
-    )
+    testPIAM <- data.frame(ID = names(hl),
+                           PIAM = hl,
+                           stringsAsFactors = F)
   }
 
   ## PIDG subtypes
-  if(T){
-    xZ.PIDG <- as.data.frame(t(xZ[PIDG,]))
-    if(cluster.method != 'randomForest'){
+  if (T) {
+    xZ.PIDG <- as.data.frame(t(xZ[PIDG, ]))
+    if (cluster.method != 'randomForest') {
       # Use non-randomForest strategy
       dis <- dist(xZ.PIDG, method = "euclidean")
       hc <- hclust(dis, method =  cluster.method) # "ward.D2"
       comp2 <- cutree(hc, 2)
     } else {
       # Use randomForest strategy
-      set.seed(rF.para$seed[3]); rf <- randomForest(x = xZ.PIDG, ntree = rF.para$ntree[2], proximity = T)
+      set.seed(rF.para$seed[3])
+      rf <-
+        randomForest(x = xZ.PIDG,
+                     ntree = rF.para$ntree[2],
+                     proximity = T)
       dissMat <- sqrt(1 - rf$proximity)
-      set.seed(rF.para$seed[4]); pamRF <- pam(dissMat, k = rF.para$k[2])
+      set.seed(rF.para$seed[4])
+      pamRF <- pam(dissMat, k = rF.para$k[2])
       comp2 <- pamRF$clustering
     }
 
     # Get high/low subgroup
-    p1 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 1],], na.rm = T), na.rm = T)
-    p2 <- sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 2],], na.rm = T), na.rm = T)
+    p1 <-
+      sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 1], ], na.rm = T), na.rm = T)
+    p2 <-
+      sum(colMeans(xZ.PIDG[names(comp2)[comp2 == 2], ], na.rm = T), na.rm = T)
 
-    if(p1>p2){
+    if (p1 > p2) {
       id_high <- names(comp2)[comp2 == 1]
-      h <- rep('pidg_high',length(id_high));names(h) <- id_high
+      h <- rep('pidg_high', length(id_high))
+      names(h) <- id_high
       id_low <- names(comp2)[comp2 == 2]
-      l <- rep('pidg_low',length(id_low));names(l) <- id_low
+      l <- rep('pidg_low', length(id_low))
+      names(l) <- id_low
     } else {
       id_high <- names(comp2)[comp2 == 2]
-      h <- rep('pidg_high',length(id_high));names(h) <- id_high
+      h <- rep('pidg_high', length(id_high))
+      names(h) <- id_high
       id_low <- names(comp2)[comp2 == 1]
-      l <- rep('pidg_low',length(id_low));names(l) <- id_low
+      l <- rep('pidg_low', length(id_low))
+      names(l) <- id_low
     }
 
-    hl <- c(h,l)
+    hl <- c(h, l)
 
-    testPIDG <- data.frame(
-      ID = names(hl),
-      PIDG = hl,
-      stringsAsFactors = F
-    )
+    testPIDG <- data.frame(ID = names(hl),
+                           PIDG = hl,
+                           stringsAsFactors = F)
   }
 
   ## PIAM+PIDG
-  df <- left_join(testPIAM,testPIDG,by='ID')
-  a <- paste(df$PIAM,df$PIDG,sep = '-') # table(df$`PAD subtype`)
+  df <- left_join(testPIAM, testPIDG, by = 'ID')
+  a <- paste(df$PIAM, df$PIDG, sep = '-') # table(df$`PAD subtype`)
   df$`PAD subtype` <- ifelse(
-    a == 'piam_high-pidg_high','PAD-I',ifelse(
-      a == 'piam_high-pidg_low','PAD-II',ifelse(
-        a == 'piam_low-pidg_high','PAD-III',
-        'PAD-IV')))
-  df$PIAM <- gsub('piam_','',df$PIAM)
-  df$PIDG <- gsub('pidg_','',df$PIDG)
+    a == 'piam_high-pidg_high',
+    'PAD-I',
+    ifelse(
+      a == 'piam_high-pidg_low',
+      'PAD-II',
+      ifelse(a == 'piam_low-pidg_high', 'PAD-III',
+             'PAD-IV')
+    )
+  )
+  df$PIAM <- gsub('piam_', '', df$PIAM)
+  df$PIDG <- gsub('pidg_', '', df$PIDG)
   # df <- arrange(df,`PAD subtype`) %>% as.data.frame()
-  df <- df[match(colnames(xZ),df$ID),] # aligned to expr
+  df <- df[match(colnames(xZ), df$ID), ] # aligned to expr
 
   ## TMEscore-like: Activated immune score
   # This score is not well for estimation of gene expression.
-  if(F){
+  if (F) {
     # PC1 of  PIAM
-    xZ_PIAM <- xZ[PIAM,]
-    pca.mt <- prcomp(xZ_PIAM,center = F,scale. = F)
-    PC1_PIAM <- pca.mt[["rotation"]][,1]
+    xZ_PIAM <- xZ[PIAM, ]
+    pca.mt <- prcomp(xZ_PIAM, center = F, scale. = F)
+    PC1_PIAM <- pca.mt[["rotation"]][, 1]
 
     # PC1 of PIDG
-    xZ_PIDG <- xZ[PIDG,]
-    pca.mt <- prcomp(xZ_PIDG,center = F,scale. = F)
-    PC1_PIDG <- pca.mt[["rotation"]][,1]
+    xZ_PIDG <- xZ[PIDG, ]
+    pca.mt <- prcomp(xZ_PIDG, center = F, scale. = F)
+    PC1_PIDG <- pca.mt[["rotation"]][, 1]
 
     # Match
     PC1_PIAM <- PC1_PIAM[names(PC1_PIDG)]
     df_score <- data.frame(
       ID = names(PC1_PIAM),
-      AIscore = PC1_PIAM - PC1_PIDG, # Activated immune score
+      AIscore = PC1_PIAM - PC1_PIDG,
+      # Activated immune score
       stringsAsFactors = F
     )
 
-    df2 <- left_join(df,df_score,by='ID') %>%
-      arrange(`PAD subtype`,desc(AIscore)) %>%
+    df2 <- left_join(df, df_score, by = 'ID') %>%
+      arrange(`PAD subtype`, desc(AIscore)) %>%
       as.data.frame()
   }
 
   ## Heatmap
-  if(T){
+  if (T) {
     rownames(df) <- as.character(df$ID)
     # xZ <- xZ[,rownames(df)]
     # df <- df[match(table = as.character(df$ID),colnames(xZ)),]
@@ -321,8 +352,8 @@ PAD <- function(
       PIDG = df$PIDG,
       `PAD subtype` = df$`PAD subtype`,
       col = list(
-        PIAM = c('high' = 'red','low' = 'blue'),
-        PIDG = c('high' = 'red','low' = 'blue'),
+        PIAM = c('high' = 'red', 'low' = 'blue'),
+        PIDG = c('high' = 'red', 'low' = 'blue'),
         `PAD subtype` = c(
           'PAD-I' = "#F8766D",
           'PAD-II' = "#7CAE00",
@@ -336,44 +367,41 @@ PAD <- function(
 
     # row annotation
     ra <- rowAnnotation(
-      Gene = classify(
-        rownames(xZ),
-        list(
-          PIAM = PIAM,
-          PIDG = PIDG
-        ),
-        cover = F
-      ),
-      col = list(
-        Gene = c(
-          PIAM = 'red',
-          PIDG = 'blue'
-        )
-      ),
+      Gene = classify(rownames(xZ),
+                      list(PIAM = PIAM,
+                           PIDG = PIDG),
+                      cover = F),
+      col = list(Gene = c(
+        PIAM = 'red',
+        PIDG = 'blue'
+      )),
       annotation_name_gp = gpar(fontsize = 13, fontface = "bold"),
       annotation_name_side = "top"
     )
 
-    p <- Heatmap(xZ,
-                 name = 'z-score',
-                 cluster_rows = T,
-                 cluster_columns = F,
-                 show_column_names = F,
-                 show_row_names = F,
-                 column_split = df$`PAD subtype`,
-                 row_km = 2,
-                 clustering_distance_rows = "euclidean",
-                 clustering_distance_columns = "euclidean",
-                 column_names_gp = gpar(fontsize = 12, fontface = "bold"),
-                 row_names_gp = gpar(fontsize = 8, fontface = "bold"),
-                 row_title = plot.title,
-                 row_title_side = 'left',
-                 row_title_gp = gpar(fontsize = 15, fontface = "bold"),
-                 top_annotation = ha,
-                 left_annotation = ra
+    p <- Heatmap(
+      xZ,
+      name = 'z-score',
+      cluster_rows = T,
+      cluster_columns = F,
+      show_column_names = F,
+      show_row_names = F,
+      column_split = df$`PAD subtype`,
+      row_km = 2,
+      clustering_distance_rows = "euclidean",
+      clustering_distance_columns = "euclidean",
+      column_names_gp = gpar(fontsize = 12, fontface = "bold"),
+      row_names_gp = gpar(fontsize = 8, fontface = "bold"),
+      row_title = plot.title,
+      row_title_side = 'left',
+      row_title_gp = gpar(fontsize = 15, fontface = "bold"),
+      top_annotation = ha,
+      left_annotation = ra
     )
-    if(!is.null(extra.annot)) p <- p %v% extra.annot
-    if(verbose) print(p)
+    if (!is.null(extra.annot))
+      p <- p %v% extra.annot
+    if (verbose)
+      print(p)
 
   }
 
@@ -393,15 +421,6 @@ PAD <- function(
     MissGene = lack,
     Plot = p
   )
-  cat('Done!','\n')
+  cat('Done!', '\n')
   return(res)
 }
-
-
-
-
-
-
-
-
-

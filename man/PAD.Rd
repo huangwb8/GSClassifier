@@ -58,43 +58,44 @@ This function is used for unsupervised classification of raw data,
   signatures.
 }
 \examples{
-extra.annot = HeatmapAnnotation(
-Dataset = id.dataset,
-col = list(
-  Dataset = if(T){
-    l <- mycolor[1:length(unique(id.dataset))];
-    names(l) <- unique(id.dataset);
-    l}
-),
-annotation_name_gp = gpar(fontsize = 13, fontface = "bold"),
-show_legend = T
-)
+if(F){
+  extra.annot = HeatmapAnnotation(
+    Dataset = id.dataset,
+    col = list(
+      Dataset = if(T){
+        l <- mycolor[1:length(unique(id.dataset))];
+        names(l) <- unique(id.dataset);
+        l}
+    ),
+    annotation_name_gp = gpar(fontsize = 13, fontface = "bold"),
+    show_legend = T
 
-res1 <- PAD(
-  expr = dm.combat.tumor,
-  PIAM = piam,
-  PIDG = pidg,
-  plot.title = 'PanSTAD',
-  cluster.method = 'ward.D2',
-  subtype = 'PAD.train_20200110',
-  extra.annot = extra.annot,
-  verbose = T
-)
+  res1 <- PAD(
+    expr = dm.combat.tumor,
+    PIAM = piam,
+    PIDG = pidg,
+    plot.title = 'PanSTAD',
+    cluster.method = 'ward.D2',
+    subtype = 'PAD.train_20200110',
+    extra.annot = extra.annot,
+    verbose = T
+  )
 
-# randomForest: time-consuming in large cohorts
-res2 <- PAD(
-  expr = dm.combat.tumor,
-  PIAM = piam,
-  PIDG = pidg,
-  cluster.method = 'randomForest',
-  rF.para = list(
-    seed = c(2020,485,58,152),
-    ntree = c(1000,1000),
-    k=c(2,2)
-  ),
-  subtype = 'PAD.train_20200110',
-  extra.annot = extra.annot,
-  plot.title = 'PanSTAD',
-  verbose = T
-)
+  # randomForest: time-consuming in large cohorts
+  res2 <- PAD(
+    expr = dm.combat.tumor,
+    PIAM = piam,
+    PIDG = pidg,
+    cluster.method = 'randomForest',
+    rF.para = list(
+      seed = c(2020,485,58,152),
+      ntree = c(1000,1000),
+      k=c(2,2)
+    ),
+    subtype = 'PAD.train_20200110',
+    extra.annot = extra.annot,
+    plot.title = 'PanSTAD',
+    verbose = T
+  )
+}
 }

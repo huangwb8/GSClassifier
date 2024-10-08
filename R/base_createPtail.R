@@ -10,23 +10,36 @@
 #' ptail <- createPtail(geneSet, interval = c(200,400,600,800,1000))
 #' print(ptail)
 #' @export
-createPtail <- function(geneSet, interval = c(200,400,600,800,1000)){
+createPtail <-
+  function(geneSet,
+           interval = c(200, 400, 600, 800, 1000)) {
+    # Test
+    if (F) {
+      ImmuneSubtype <-
+        readRDS(system.file("extdata", "ImmuneSubtype.rds", package = "GSClassifier"))
+      geneSet <- ImmuneSubtype$geneSet
+      interval = c(200, 400, 600, 800, 1000)
+    }
 
-  # Test
-  if(F){
-    ImmuneSubtype <- readRDS(system.file("extdata", "ImmuneSubtype.rds", package = "GSClassifier"))
-    geneSet <- ImmuneSubtype$geneSet
-    interval = c(200,400,600,800,1000)
+    Num_GeneSet <- length(geneSet)
+    Num_Gene <- length(unique(unlist(geneSet)))
+
+    ptails <- sapply(interval, function(x)solve_ptail(Num_GeneSet, Num_Gene, x))
+    return(ptails/2)
   }
 
-  Num_GeneSet <- length(geneSet)
-  Num_Gene <- length(unique(unlist(geneSet)))
-  Num_Feature <- Num_GeneSet * (Num_GeneSet - 1)/2 + Num_Gene * (Num_Gene - 1)/2
+####=== Asistant fucntions ===####
 
-  interval <- interval[interval<=Num_Feature]
-  if(length(interval) == 0){
-    stop('Please use lower interval than ', Num_Feature, '!')
-  } else {
-    return(interval/Num_Feature)
-  }
+solve_ptail <- function(Num_GeneSet, Num_Gene, interval) {
+
+  # x = -b/(2a) ± √(b²-4ac) / (2a)
+
+  a = Num_Gene ^ 2
+  b = -(Num_Gene)
+  c = - 2 * interval
+
+  x1 <- (-b + sqrt(b^2 - 4*a*c))/(2*a)
+  # x2 <- (-b - sqrt(b^2 - 4*a*c))/(2*a)
+
+  return(x1)
 }

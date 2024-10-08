@@ -1,6 +1,4 @@
 
-
-
 #' @description Train a single subtype model
 #' @param Xs Gene expression matrix.
 #' @param Ys Phenotype vector, multiclass
@@ -22,8 +20,8 @@
 fitSubtypeModel <- function(Xs,
                             Ys,
                             geneSet,
-                            na.fill.method = c('quantile','rpart',NULL)[1],
-                            na.fill.seed=2022,
+                            na.fill.method = c('quantile', 'rpart', NULL)[1],
+                            na.fill.seed = 2022,
                             breakVec = c(0, 0.25, 0.5, 0.75, 1.0),
                             params = list(
                               nrounds = 15,
@@ -36,8 +34,8 @@ fitSubtypeModel <- function(Xs,
                             nround.mode = c('fixed', 'polling')[2],
                             xgboost.seed = 105,
                             caret.grid = expand.grid(
-                              nrounds = c(10,15),
-                              max_depth = c(5,10),
+                              nrounds = c(10, 15),
+                              max_depth = c(5, 10),
                               eta = c(0.01, 0.1, 0.3),
                               gamma = c(0.5, 0.3),
                               colsample_bytree = 1,
@@ -53,9 +51,11 @@ fitSubtypeModel <- function(Xs,
 
   # Set seeds
   set.seed(caret.seed)
-  caret.seeds <- sample(1:100000, size = length(allLabels), replace = F)
+  caret.seeds <-
+    sample(1:100000, size = length(allLabels), replace = F)
   set.seed(xgboost.seed)
-  xgboost.seeds <- sample(1:100000, size = length(allLabels), replace = F)
+  xgboost.seeds <-
+    sample(1:100000, size = length(allLabels), replace = F)
 
   # Missing value imputation
   Xs <- na_fill(Xs,
@@ -71,12 +71,14 @@ fitSubtypeModel <- function(Xs,
     if (verbose)
       LuckyVerbose(paste0('Subtype: ', yi, '  processing data...'))
     res0 <-
-      trainDataProc(Xs,
-                    Ys,
-                    geneSet = geneSet,
-                    subtype = yi,
-                    ptail = ptail,
-                    breakVec = breakVec)
+      trainDataProc(
+        Xs,
+        Ys,
+        geneSet = geneSet,
+        subtype = yi,
+        ptail = ptail,
+        breakVec = breakVec
+      )
     dat  <- res0$dat
     Xbin <- dat$Xbin
     if (verbose)
@@ -98,7 +100,7 @@ fitSubtypeModel <- function(Xs,
         seed = xgboost.seeds[i],
         nround.mode = nround.mode,
         verbose = verbose
-        )
+      )
     } else {
       # The caret::train strategy for params selection. Time consuming
       csfr <-
@@ -137,8 +139,8 @@ fitSubtypeModel <- function(Xs,
 fitEnsembleModel <- function(Xs,
                              Ys,
                              geneSet = NULL,
-                             na.fill.method = c('quantile','rpart',NULL)[1],
-                             na.fill.seed=2022,
+                             na.fill.method = c('quantile', 'rpart', NULL)[1],
+                             na.fill.seed = 2022,
                              n = 20,
                              sampSize = 0.7,
                              sampSeed = 2020,
@@ -155,8 +157,8 @@ fitEnsembleModel <- function(Xs,
                              nround.mode = c('fixed', 'polling')[2],
                              xgboost.seed = 105,
                              caret.grid = expand.grid(
-                               nrounds = c(10,15),
-                               max_depth = c(5,10),
+                               nrounds = c(10, 15),
+                               max_depth = c(5, 10),
                                eta = c(0.01, 0.1, 0.3),
                                gamma = c(0.5, 0.3),
                                colsample_bytree = 1,
@@ -169,9 +171,11 @@ fitEnsembleModel <- function(Xs,
                              numCores = 2) {
   if (is.null(geneSet)) {
     geneSet = readRDS(system.file("extdata", paste0('PAD.train_20200110.rds'), package = "GSClassifier"))$geneSet
-    if (verbose) LuckyVerbose('fitEnsembleModel: PAD subtype training...')
+    if (verbose)
+      LuckyVerbose('fitEnsembleModel: PAD subtype training...')
   }
-  if (verbose) LuckyVerbose('fitEnsembleModel: nround.mode = ',nround.mode,' ...')
+  if (verbose)
+    LuckyVerbose('fitEnsembleModel: nround.mode = ', nround.mode, ' ...')
 
 
   # Missing value imputation
@@ -202,7 +206,8 @@ fitEnsembleModel <- function(Xs,
     # i = (1:n)[1]
     modi <- c()
     set.seed(seeds[i])
-    jdx <- sample(1:ncol(Xs), size = sampSize * ncol(Xs), replace = F)
+    jdx <-
+      sample(1:ncol(Xs), size = sampSize * ncol(Xs), replace = F)
     Xs2 <- Xs[, jdx]
     Ys2 <- Ys[jdx]
     modi <- fitSubtypeModel(
@@ -227,7 +232,8 @@ fitEnsembleModel <- function(Xs,
 
   # Probability calculation
   # Parallel Cores # https://stackoverflow.com/questions/21773199/r-makecluster-hangs-on-localhost-in-linux
-  if (verbose) LuckyVerbose('fitEnsembleModel: Start parallel process ...')
+  if (verbose)
+    LuckyVerbose('fitEnsembleModel: Start parallel process ...')
   cl <- makeCluster(numCores)
 
   # Parallel parameters
@@ -290,7 +296,9 @@ fitEnsembleModel <- function(Xs,
   })
   stopCluster(cl)
   if (verbose)
-    LuckyVerbose('fitEnsembleModel: Consuming time of parallel process is ', round(sum(time_int, na.rm = T), 2), 's.')
+    LuckyVerbose('fitEnsembleModel: Consuming time of parallel process is ',
+                 round(sum(time_int, na.rm = T), 2),
+                 's.')
 
   # Output results
   res <- list(

@@ -15,17 +15,16 @@
 #' Empty
 #' @export
 mv_tolerance <- function(X,
-                         gene.loss = c(2,4,6,8,10,12),
-                         levels = c(1,2,3,4),
+                         gene.loss = c(2, 4, 6, 8, 10, 12),
+                         levels = c(1, 2, 3, 4),
                          model = 'PAD.train_20220916',
                          seed = 487,
-                         verbose = T){
-
+                         verbose = T) {
   # Test
-  if(F){
-
+  if (F) {
     # Internal validation cohort
-    testData <- readRDS(system.file("extdata", "testData.rds", package = "GSClassifier"))
+    testData <-
+      readRDS(system.file("extdata", "testData.rds", package = "GSClassifier"))
     expr_pad <- testData$PanSTAD_expr_part
     modelInfo <- modelData(
       design = testData$PanSTAD_phenotype_part,
@@ -35,30 +34,30 @@ mv_tolerance <- function(X,
       seed = 19871
     )
     validInform <- modelInfo$Data$Valid
-    X <- expr_pad[,validInform$ID]
+    X <- expr_pad[, validInform$ID]
 
     # Other parameters
-    gene.loss = c(2,4,6,8,10,12)
+    gene.loss = c(2, 4, 6, 8, 10, 12)
     model = 'PAD.train_20220916'
     seed = 487
     verbose = T
-    levels = c(1,2,3,4)
+    levels = c(1, 2, 3, 4)
 
   }
 
   # MVI with quantile algorithm
   X <- GSClassifier:::na_fill(X,
-                              method='quantile',
+                              method = 'quantile',
                               seed = 411,
                               verbose = verbose)
 
   # Get model
-  if(is.character(model)){
+  if (is.character(model)) {
     # Model in GSClassifier
     m <- readRDS(system.file("extdata",
-                             paste0(model,'.rds',collapse = ''),
+                             paste0(model, '.rds', collapse = ''),
                              package = "GSClassifier"))
-  } else if(is.list(model)){
+  } else if (is.list(model)) {
     # Model in luckyModel
     m <- model
   } else {
@@ -80,11 +79,14 @@ mv_tolerance <- function(X,
   )
 
   # multi-ROC: time-consuming if a large matrix used
-  set.seed(seed); seeds <- sample(1:100000,
-                                  length(gene.loss),
-                                  replace = F)
-  mAUC <- list(); model_res <- list()
-  for(i in 1:length(gene.loss)){ # i=1
+  set.seed(seed)
+  seeds <- sample(1:100000,
+                  length(gene.loss),
+                  replace = F)
+  mAUC <- list()
+  model_res <- list()
+  for (i in 1:length(gene.loss)) {
+    # i=1
 
     # Masked matrix with zero value
     X2 <- masked_matrix(X,
@@ -108,16 +110,15 @@ mv_tolerance <- function(X,
       response = res0$BestCall,
       predictor = res$BestCall,
       levels = levels,
-      quiet = T)
+      quiet = T
+    )
     model_res[[paste0('GeneLoss=', gene.loss[i])]] <- res
   }
   # mymusic()
 
   # Output
-  l <- list(
-    multiAUC = mAUC,
-    modelRes = model_res
-  )
+  l <- list(multiAUC = mAUC,
+            modelRes = model_res)
   return(l)
 
   # saveRDS(l, './data/results-mv_tolerance-GC.rds')
@@ -127,8 +128,7 @@ mv_tolerance <- function(X,
 #' @inheritParams mv_tolerance
 masked_matrix <- function(X,
                           gene.loss = 2,
-                          seed = 487){
-
+                          seed = 487) {
   # Zero Matrix
   # Xzero <- matrix(
   #   data = rep(0, nrow(X)*ncol(X)),
@@ -137,14 +137,13 @@ masked_matrix <- function(X,
   #                   colnames(X)))
 
   # Random seeds
-  set.seed(seed); seeds <- sample(1:100000, ncol(X), replace = F)
+  set.seed(seed)
+  seeds <- sample(1:100000, ncol(X), replace = F)
   X2 <- as.matrix(X)
-  for(i in 1:ncol(X)){ # i=1
+  for (i in 1:ncol(X)) {
+    # i=1
     set.seed(seeds[i])
-    X2[sample(1:nrow(X2), gene.loss, replace = F),i] <- 0
+    X2[sample(1:nrow(X2), gene.loss, replace = F), i] <- 0
   }
   return(X2)
 }
-
-
-
