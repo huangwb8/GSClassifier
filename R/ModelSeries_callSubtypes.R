@@ -5,6 +5,7 @@
 #' @param X One gene expression matrix
 #' @param genes a vector of gene pairs
 #' @return xbin, binned expression profile
+#' @details This function could be achieved via \code{makeGenePairs}. Not be used in the later GSClassifier.
 #' @examples
 #' Xsub <- createPairsFeatures(Xmat, genepairs)
 createPairsFeatures <- function(X, genes) {
@@ -162,8 +163,9 @@ dataProc <- function(X,
 
   # here we have expression data, and we're using the pairs model
   # so we need to make pairs features.
-  Xpairs <- createPairsFeatures(Xmat, pairedGenes)
-  colnames(Xpairs) <- colnames(Xmat)
+  Xpairs <- makeGenePairs(unique(Fastextra(pairedGenes,'\\:')), Xmat)[pairedGenes, ]
+  # Xpairs <- createPairsFeatures(Xmat, pairedGenes)
+  # colnames(Xpairs) <- colnames(Xmat)
 
   # gene set features.
   Xset <- makeSetData(Xmat, geneSet)
