@@ -1,6 +1,7 @@
 
 
 
+
 #' @title PADi
 #' @description PAD for individuals
 #' @param cancer.type The type of cancer
@@ -46,7 +47,7 @@
 #' ## Method2: use a specific function called 'PADi'
 #' res_padi <- PADi(X = X, verbose = F)
 #'
-#' ## Method3: Parallel strategy for lots of samples (empirically >50) to save #' time. Not Run for small cohorts.
+#' ## Method3: Parallel strategy for lots of samples (empirically >50) to save time. Not Run for small cohorts.
 #' # res_padi <- parCallEnsemble(
 #' #   X = X,
 #' #   ens = NULL,
@@ -67,10 +68,9 @@ PADi <- function(X,
                  version = c('20200110',
                              '20220916')[1],
                  numCores = 0,
-                 verbose = T){
-
+                 verbose = T) {
   # Test
-  if(F){
+  if (F) {
     X = expr2
     geneid = "ensembl"
   }
@@ -80,8 +80,7 @@ PADi <- function(X,
 
   subtype <- paste0("PAD.train_", version)
 
-  if(pass & numCores == 0){
-
+  if (pass & numCores == 0) {
     # Common mode
     callEnsemble(
       X = X,
@@ -96,12 +95,11 @@ PADi <- function(X,
       verbose = verbose
     )
 
-  } else if(pass & numCores>0){
-
+  } else if (pass & numCores > 0) {
     # Parallel mode
     parCallEnsemble(
       X = X,
-      ens=NULL,
+      ens = NULL,
       geneAnnotation = NULL,
       geneSet = NULL,
       scaller = NULL,
@@ -109,11 +107,13 @@ PADi <- function(X,
       matchmode = matchmode,
       subtype = subtype,
       verbose = verbose,
-      numCores = numCores)
+      numCores = numCores
+    )
 
   } else{
-
-    LuckyVerbose("Incorrect 'cancer.type' or 'version'. Only cancer.type = 'GC' is available in the current software.")
+    LuckyVerbose(
+      "Incorrect 'cancer.type' or 'version'. Only cancer.type = 'GC' is available in the current software."
+    )
 
   }
 

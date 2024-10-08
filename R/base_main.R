@@ -63,7 +63,7 @@ geneMatch_fixed <- function(X,
       X2 <- X[idx,]
     }
 
-      # Adds NA rows in missing genes
+    # Adds NA rows in missing genes
     rownames(X2) <- as.character(geneAnnotation[,name_col[names(name_col) == 'ensembl']])
 
 
