@@ -13,9 +13,12 @@
 <a href="https://github.com/huangwb8/GSClassifier/issues"><img src="https://img.shields.io/github/issues-raw/huangwb8/GSClassifier"></a>
 <a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fhuangwb8%2FGSClassifier?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhuangwb8%2FGSClassifier.svg?type=shield"/></a>
 </p>
-
 ### A comprehensive and expandable classification tool  based on pure transcriptomics for precision medicine
 
+
+## :hotsprings: Update
+
++ **2025-05-23**: Updating PADi to [v20250523](https://github.com/huangwb8/luckyModel) fixing some bugs.
 
 ## :camel: Tutorial
 
